@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedHelp", "MedHelp\MedHelp.csproj", "{ABF90408-97B2-46BD-9CAF-73E51952DA8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedHelp.Access", "MedHelp.Access\MedHelp.Access.csproj", "{3127ED62-F0BC-4EF7-A3AE-DD6D6B150766}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABF90408-97B2-46BD-9CAF-73E51952DA8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABF90408-97B2-46BD-9CAF-73E51952DA8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABF90408-97B2-46BD-9CAF-73E51952DA8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABF90408-97B2-46BD-9CAF-73E51952DA8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3127ED62-F0BC-4EF7-A3AE-DD6D6B150766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3127ED62-F0BC-4EF7-A3AE-DD6D6B150766}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3127ED62-F0BC-4EF7-A3AE-DD6D6B150766}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3127ED62-F0BC-4EF7-A3AE-DD6D6B150766}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1461F4EC-DB7C-4E19-A2A7-978A72D607BF}
+	EndGlobalSection
+EndGlobal
