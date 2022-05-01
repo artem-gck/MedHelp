@@ -10,4 +10,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MedHelp.Access.SqlServer\MedHelp.Access.SqlServer.csproj" />
+    <ProjectReference Include="..\MedHelp.Access\MedHelp.Access.csproj" />
+    <ProjectReference Include="..\MedHelp.Services.Logic\MedHelp.Services.Logic.csproj" />
+    <ProjectReference Include="..\MedHelp.Services\MedHelp.Services.csproj" />
+  </ItemGroup>
+
 </Project>
