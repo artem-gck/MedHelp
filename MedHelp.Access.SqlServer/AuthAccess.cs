@@ -53,6 +53,9 @@ namespace MedHelp.Access.SqlServer
         /// <inheritdoc/>
         public async Task<int> AddUserAsync(User user)
         {
+            if (user.Patient is not null)
+                user.Patient.Sex = await GetSex(user.Patient.Sex.Value);
+
             var userE = await _medHelpContext.Users.AddAsync(user);
             await _medHelpContext.SaveChangesAsync();
 

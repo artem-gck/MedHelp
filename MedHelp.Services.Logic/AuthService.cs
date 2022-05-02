@@ -161,11 +161,16 @@ namespace MedHelp.Services.Logic
 
             if (user.Doctor is not null)
             {
-                userDb.Doctor.Name = user.Doctor.Name;
-                userDb.Doctor.FirstName = user.Doctor.FirstName;
-                userDb.Doctor.LastName = user.Doctor.LastName;
-                userDb.Doctor.NumberOfPhone = user.Doctor.NumberOfPhone;
-                userDb.Doctor.Specialization = user.Doctor.Specialization;
+                var doctor = new Access.Entity.Doctor()
+                {
+                    Name = user.Doctor.Name,
+                    FirstName = user.Doctor.FirstName,
+                    LastName = user.Doctor.LastName,
+                    NumberOfPhone = user.Doctor.NumberOfPhone,
+                    Specialization = user.Doctor.Specialization,
+                };
+
+                userDb.Doctor = doctor;
             }
             else
             {
@@ -174,11 +179,17 @@ namespace MedHelp.Services.Logic
                     Value = user.Patient.Sex.Value
                 };
 
-                userDb.Patient.Name = user.Patient.Name;
-                userDb.Patient.FirstName = user.Patient.FirstName;
-                userDb.Patient.LastName = user.Patient.LastName;
-                userDb.Patient.NumberOfPhone = user.Patient.NumberOfPhone;
-                userDb.Patient.Sex = sex;
+                var patient = new Access.Entity.Patient()
+                {
+                    Name = user.Patient.Name,
+                    FirstName = user.Patient.FirstName,
+                    LastName = user.Patient.LastName,
+                    NumberOfPhone = user.Patient.NumberOfPhone,
+                    DateOfDirth = user.Patient.DateOfDirth,
+                    Sex = sex
+                };
+                
+                userDb.Patient = patient;
             }
 
             return userDb;
@@ -194,11 +205,16 @@ namespace MedHelp.Services.Logic
 
             if (user.Doctor is not null)
             {
-                userMod.Doctor.Name = user.Doctor.Name;
-                userMod.Doctor.FirstName = user.Doctor.FirstName;
-                userMod.Doctor.LastName = user.Doctor.LastName;
-                userMod.Doctor.NumberOfPhone = user.Doctor.NumberOfPhone;
-                userMod.Doctor.Specialization = user.Doctor.Specialization;
+                var doctor = new Doctor()
+                {
+                    Name = user.Doctor.Name,
+                    FirstName = user.Doctor.FirstName,
+                    LastName = user.Doctor.LastName,
+                    NumberOfPhone = user.Doctor.NumberOfPhone,
+                    Specialization = user.Doctor.Specialization,
+                };
+
+                userMod.Doctor = doctor;
             }
             else
             {
@@ -207,11 +223,17 @@ namespace MedHelp.Services.Logic
                     Value = user.Patient.Sex.Value
                 };
 
-                userMod.Patient.Name = user.Patient.Name;
-                userMod.Patient.FirstName = user.Patient.FirstName;
-                userMod.Patient.LastName = user.Patient.LastName;
-                userMod.Patient.NumberOfPhone = user.Patient.NumberOfPhone;
-                userMod.Patient.Sex = sex;
+                var patient = new Patient()
+                {
+                    Name = user.Patient.Name,
+                    FirstName = user.Patient.FirstName,
+                    LastName = user.Patient.LastName,
+                    NumberOfPhone = user.Patient.NumberOfPhone,
+                    DateOfDirth = user.Patient.DateOfDirth,
+                    Sex = sex
+                };
+
+                userMod.Patient = patient;
             }
 
             return userMod;

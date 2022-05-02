@@ -10,5 +10,7 @@ namespace MedHelp.Services.ViewModel
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
+        public string Login { get; set; }
+        public string Role { get; set; }
     }
 }
