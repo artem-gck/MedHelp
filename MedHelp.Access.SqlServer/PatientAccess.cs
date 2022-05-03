@@ -53,5 +53,45 @@ namespace MedHelp.Access.SqlServer
                                                    .Where(rec => rec.Tolon.Patient.PatientId == idPatient)
                                                    .ToListAsync();
         }
+
+        public async Task<int> UpdatePatient(Patient patient)
+        {
+            var patientDb = await _medHelpContext.Patients.Include(pat => pat.User).Include(pat => pat.Sex).FirstOrDefaultAsync(pat => pat.PatientId == patient.PatientId);
+
+            patientDb.User.Login = patient.User.Login;
+            patientDb.User.Password = patient.User.Password;
+            patientDb.Sex.Value = patient.Sex.Value;
+            patientDb.DateOfDirth = patient.DateOfDirth;
+            patientDb.Name = patient.Name;
+            patientDb.FirstName = patient.FirstName;
+            patientDb.LastName = patient.LastName;
+            patientDb.NumberOfPhone = patient.NumberOfPhone;
+
+            await _medHelpContext.SaveChangesAsync();
+
+            return patientDb.PatientId;
+        }
+
+        public async Task<int> DeletePatient(int id)
+        {
+            var patientDb = await _medHelpContext.Patients.Include(pat => pat.User).FirstOrDefaultAsync(pat => pat.PatientId == id);
+
+            var ent = _medHelpContext.Users.Remove(patientDb.User);
+
+            await _medHelpContext.SaveChangesAsync();
+
+            return ent.Entity.UserId;
+        }
+
+        public async Task<int> AddPatient(Patient patient)
+        {
+            var sex = await _medHelpContext.Sexes.FirstOrDefaultAsync(sex => sex.Value == patient.Sex.Value);
+            patient.Sex = sex;
+            var patientDb = await _medHelpContext.Patients.AddAsync(patient);
+
+            await _medHelpContext.SaveChangesAsync();
+
+            return patientDb.Entity.UserId;
+        }
     }
 }

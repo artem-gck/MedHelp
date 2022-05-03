@@ -1,5 +1,6 @@
 ﻿using MedHelp.Client.Models;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 
 namespace MedHelp.Client.Services.Logic
 {
@@ -9,6 +10,24 @@ namespace MedHelp.Client.Services.Logic
 
         public PatientService(HttpClient httpClient)
             => _httpClient = httpClient;
+
+        public async Task<int> AddPatient(Patient patient)
+        {
+            var resp = await _httpClient.PostAsJsonAsync($"patient", patient);
+            var idString = await resp.Content.ReadAsStringAsync();
+            var id = int.Parse(idString);
+
+            return id;
+        }
+
+        public async Task<int> DeletePatient(int id)
+        {
+            var resp = await _httpClient.DeleteAsync($"patient/{id}");
+            var idPString = await resp.Content.ReadAsStringAsync();
+            var idP = int.Parse(idPString);
+
+            return idP;
+        }
 
         public async Task<Patient> GetPatient(int id)
         {
@@ -44,6 +63,15 @@ namespace MedHelp.Client.Services.Logic
             var tolones = JsonConvert.DeserializeObject<List<Tolon>>(tolonesString);
 
             return tolones;
+        }
+
+        public async Task<int> UpdatePatient(Patient patient)
+        {
+            var resp = await _httpClient.PutAsJsonAsync($"patient", patient);
+            var idString = await resp.Content.ReadAsStringAsync();
+            var id = int.Parse(idString);
+
+            return id;
         }
     }
 }

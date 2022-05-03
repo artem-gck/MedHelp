@@ -44,6 +44,21 @@ namespace MedHelp.Services.Logic
             return receptions.Select(rec => MapReceptionToMod(rec)).ToList();
         }
 
+        public async Task<int> UpdatePatient(Patient patient)
+        {
+            return await _patientAccess.UpdatePatient(MapDoctorToEnt(patient));
+        }
+
+        public async Task<int> DeletePatient(int id)
+        {
+            return await _patientAccess.DeletePatient(id);
+        }
+
+        public async Task<int> AddPatient(Patient patient)
+        {
+            return await _patientAccess.AddPatient(MapDoctorToEnt(patient));
+        }
+
         private Reception MapReceptionToMod(Access.Entity.Reception reception)
         {
             var patient = new Patient()

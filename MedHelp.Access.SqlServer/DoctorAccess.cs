@@ -115,5 +115,16 @@ namespace MedHelp.Access.SqlServer
             await _medHelpContext.SaveChangesAsync();
             return rec.Entity.ReceptionId;
         }
+
+        public async Task<List<Reception>> GetReceptions(int idDoctor)
+        {
+            return await _medHelpContext.Receptions.Include(rec => rec.Disease)
+                                                   .Include(rec => rec.Tolon)
+                                                   .ThenInclude(tol => tol.Patient)
+                                                   .Include(rec => rec.Tolon)
+                                                   .ThenInclude(tol => tol.Doctor)
+                                                   .Where(rec => rec.Tolon.Doctor.DoctorId == idDoctor)
+                                                   .ToListAsync();
+        }
     }
 }

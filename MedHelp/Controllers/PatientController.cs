@@ -37,5 +37,23 @@ namespace MedHelp.Controllers
         {
             return await _patientService.GetReception(id);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<int>> DeletePatient(int id)
+        {
+            return await _patientService.DeletePatient(id);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<int>> AddPatient(Patient patient)
+        {
+            return await _patientService.AddPatient(patient);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<int>> UpdatePatient(Patient patient)
+        {
+            return await _patientService.UpdatePatient(patient);
+        }
     }
 }

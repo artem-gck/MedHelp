@@ -1,25 +1,12 @@
-﻿@page "/tolones/visit"
+﻿@page "/visites"
 @layout MainLayout
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IIgniteUIBlazor IgniteUIBlazor
 @inject IDoctorService _doctorService;
-@inject IAuthService _authService;
 @inject IPatientService _patientService;
 
-<div>
-    <span>@patient.FirstName</span>
-    <span>@patient.Name</span>
-    <span>@patient.LastName</span>
-    <span>@patient.NumberOfPhone</span>
-    <span>@(patient.Sex.Value == "male" ? "Мужской" : "Женский")</span>
-    <span>@patient.DateOfDirth</span>
-
-    <input @bind="@NameOfDisease"></input>
-    <input @bind="@DiscriptionOfDisease"></input>
-    <input @bind="@ConclusionOfDisease"></input>
-    <button @onclick="async e => await AddReception()">Закончить приём</button>
-
-    <div class="container vertical plot">
+<div class="container vertical plot">
         <div class="container vertical" style="--use-accessibility:true;">
             @if (receptionsView != null)
             {
@@ -44,31 +31,31 @@
         </div>
     </div>
 
-    <button @onclick="Exit">Вернуться</button>
-</div>
-
 @code {
+    private string role;
+    private string login;
     private Doctor doctor;
     private Patient patient;
-    private Tolon tolon;
     private List<Reception> receptions;
     private List<ReceptionView> receptionsView;
 
-    private string NameOfDisease { get; set; }
-    private string DiscriptionOfDisease { get; set; }
-    private string ConclusionOfDisease { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
-        var patientId = await localStorage.GetItemAsStringAsync("patientId");
-        var tolonId = await localStorage.GetItemAsStringAsync("tolonId");
-        var role = await localStorage.GetItemAsStringAsync("role");
-        var doctorLogin = await localStorage.GetItemAsStringAsync("login");
+        role = await localStorage.GetItemAsStringAsync("role");
+        login = await localStorage.GetItemAsStringAsync("login");
         role = role.Trim('\"');
-        doctorLogin = doctorLogin.Trim('\"');
-        await localStorage.RemoveItemsAsync(new string[]{ "patientId", "tolonId" });
+        login = login.Trim('\"');
 
-        receptions = await _patientService.GetReceptions(int.Parse(patientId));
+        if (role == "doctor")
+        {
+            doctor = (await _doctorService.GetDoctors()).FirstOrDefault(doc => doc.User.Login == login);
+            receptions = await _doctorService.GetReceptions(doctor.DoctorId);
+        }
+        else
+        {
+            patient = (await _patientService.GetPatients()).FirstOrDefault(pac => pac.User.Login == login);
+            receptions = await _patientService.GetReceptions(patient.PatientId);
+        }
 
         receptionsView = receptions.Select(rec => new ReceptionView()
         {
@@ -79,34 +66,5 @@
             Description = rec.Disease.Description,
             Conclusion = rec.Disease.Conclusion
         }).ToList();
-
-        doctor = (await _authService.GetUser(doctorLogin)).Doctor;
-        patient = await _patientService.GetPatient(int.Parse(patientId));
-        tolon = await _doctorService.GetTolon(int.Parse(tolonId));
-    }
-
-    private async Task AddReception()
-    {
-        var disease = new Disease()
-            {
-                Name = NameOfDisease,
-                Description = DiscriptionOfDisease,
-                Conclusion = ConclusionOfDisease
-            };
-
-        var reception = new Reception()
-            {
-                Tolon = tolon,
-                Disease = disease
-            };
-
-        await _doctorService.AddReception(reception);
-
-        NavManager.NavigateTo("/tolones");
-    }
-
-    private void Exit()
-    {
-        NavManager.NavigateTo("/tolones");
     }
 }

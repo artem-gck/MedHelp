@@ -91,5 +91,14 @@ namespace MedHelp.Client.Services.Logic
 
             return id;
         }
+
+        public async Task<List<Reception>> GetReceptions(int doctorId)
+        {
+            var resp = await _httpClient.GetAsync($"doctor/reception/{doctorId}");
+            var receptionsString = await resp.Content.ReadAsStringAsync();
+            var receptions = JsonConvert.DeserializeObject<List<Reception>>(receptionsString);
+
+            return receptions;
+        }
     }
 }

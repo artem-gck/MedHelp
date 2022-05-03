@@ -66,5 +66,11 @@ namespace MedHelp.Controllers
         {
             return await _doctorService.AddReception(reception);
         }
+
+        [HttpGet("reception/{id}")]
+        public async Task<ActionResult<List<Reception>>> GetReceptions(int id)
+        {
+            return await _doctorService.GetReception(id);
+        }
     }
 }

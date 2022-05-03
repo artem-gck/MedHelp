@@ -67,6 +67,60 @@ namespace MedHelp.Services.Logic
             return await _doctorAccess.AddReception(MapReceptionToEnt(reception));
         }
 
+        public async Task<List<Reception>> GetReception(int doctorId)
+        {
+            var receptions = await _doctorAccess.GetReceptions(doctorId);
+
+            return receptions.Select(rec => MapReceptionToMod(rec)).ToList();
+        }
+
+        private Reception MapReceptionToMod(Access.Entity.Reception reception)
+        {
+            var patient = new Patient()
+            {
+                PatientId = reception.Tolon.Patient.PatientId,
+                Name = reception.Tolon.Patient.Name,
+                FirstName = reception.Tolon.Patient.FirstName,
+                LastName = reception.Tolon.Patient.LastName,
+                NumberOfPhone = reception.Tolon.Patient.NumberOfPhone,
+                DateOfDirth = reception.Tolon.Patient.DateOfDirth,
+            };
+
+            var doctor = new Doctor()
+            {
+                DoctorId = reception.Tolon.Doctor.DoctorId,
+                Name = reception.Tolon.Doctor.Name,
+                FirstName = reception.Tolon.Doctor.FirstName,
+                LastName = reception.Tolon.Doctor.LastName,
+                NumberOfPhone = reception.Tolon.Doctor.NumberOfPhone,
+                Specialization = reception.Tolon.Doctor.Specialization,
+            };
+
+            var tolon = new Tolon()
+            {
+                TolonId = reception.Tolon.TolonId,
+                Patient = patient,
+                Doctor = doctor,
+                Time = reception.Tolon.Time,
+            };
+
+            var disease = new Disease()
+            {
+                DiseaseId = reception.Disease.DiseaseId,
+                Name = reception.Disease.Name,
+                Description = reception.Disease.Description,
+                Conclusion = reception.Disease.Conclusion,
+            };
+
+            var receptionEnt = new Reception()
+            {
+                Tolon = tolon,
+                Disease = disease,
+            };
+
+            return receptionEnt;
+        }
+
         private Access.Entity.Reception MapReceptionToEnt(Reception reception)
         {
             var tolon = new Access.Entity.Tolon()

@@ -18,5 +18,6 @@ namespace MedHelp.Access
         public Task<int> DeleteTolon(int id);
         public Task<Tolon> GetTolon(int id);
         public Task<int> AddReception(Reception reception);
+        public Task<List<Reception>> GetReceptions(int idDoctor);
     }
 }

@@ -4,21 +4,21 @@
 <div class="@NavMenuCssClass">
     <div class="left-side">
         <div class="login">
-            <span>@Login</span>
+            <span>@Name</span>
             <span>@Role</span>
             <span>@Specialezation</span>
         </div>
         <div class="navigate">
-            <a href="/tolones" class="link">Толоны</a>
+            <a href="/tolones" class="link">Мои толоны</a>
             <a href="/doctors" class="link">Врачи</a>
             @if (role == "doctor")
             {
                 <a href="/patients" class="link">Пациенты</a>
-                <a href="/visites" class="link">Приёмы</a>
+                <a href="/visites" class="link">Мои приёмы</a>
             }
             else
             {
-                <a href="/card" class="link">История болезней</a>
+                <a href="/visites" class="link">Моя история болезней</a>
             }
                 <a href="/about" class="link">О себе</a>
         </div>
@@ -29,7 +29,7 @@
 </div>
 
 @code {
-    private string Login { get; set; }
+    private string Name { get; set; }
     private string Role { get; set; }
     private string Specialezation { get; set; }
 
@@ -50,8 +50,9 @@
         if (role is not null)
         {
             user = await _authService.GetUser(login);
-            Login = user.Login;
             Role = role == "doctor" ? "Врач" : "Пациент";
+
+            Name = user.Doctor is not null ? user.Doctor.Name : user.Patient.Name;
             Specialezation = user.Doctor is not null ? user.Doctor.Specialization : string.Empty;
         }
     }
