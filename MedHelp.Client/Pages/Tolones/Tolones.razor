@@ -72,6 +72,7 @@
             {
                 <button @onclick="async e => await GetPatient()">Принять пациента</button>
             }
+            <span>@errorMassage</span>
         </div>
     </div>
 </div>
@@ -86,6 +87,7 @@
     private List<Doctor> doctors;
     private List<string> specialisations;
 
+    private string errorMassage;
     private string role;
     private string spec;
     private int deletedId;
@@ -168,6 +170,12 @@
 
     private async Task AddTolon()
     {
+        if (Date < DateTime.Now)
+        {
+            errorMassage = "Толон не может быть на прошедшее время";
+            return;
+        }
+
         var login = await localStorage.GetItemAsStringAsync("login");
         login = login.Trim('\"');
         Doctor doctor;

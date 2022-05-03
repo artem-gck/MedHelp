@@ -1,4 +1,5 @@
 ﻿@page "/doctors"
+@using System.Text.RegularExpressions
 @layout MainLayout
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -66,6 +67,7 @@
                 <span class="lables">Специализация</span>
                 <input type="text" @bind="@SpecialisationField"></input>
             </div>
+            <span>@errorMassage</span>
         </div>
     }
 
@@ -80,10 +82,14 @@
     private string NumberOfPhoneField { get; set; }
     private string SpecialisationField { get; set; }
 
+    private string errorMassage;
     private string role;
     private int deletedId;
     private List<Doctor> doctors;
     private List<DoctorView> doctorsView;
+
+    private Regex regexForNumberPhone = new Regex(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private Regex regexForText = new Regex(@"^[а-яА-Я ]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,6 +113,12 @@
 
     private async Task Add()
     {
+        if (!regexForNumberPhone.IsMatch(NumberOfPhoneField) || !regexForText.IsMatch(NameField) || !regexForText.IsMatch(FirstNameField) || !regexForText.IsMatch(LastNameField))
+        {
+            errorMassage = "Формат ввода не верный";
+            return;
+        }
+
         var tolons = new List<Tolon>();
 
         var user = new User()
@@ -149,6 +161,12 @@
 
     private async Task Edit()
     {
+        if (!regexForNumberPhone.IsMatch(NumberOfPhoneField) || !regexForText.IsMatch(NameField) || !regexForText.IsMatch(FirstNameField) || !regexForText.IsMatch(LastNameField))
+        {
+            errorMassage = "Формат ввода не верный";
+            return;
+        }
+
         var doctor = doctors[deletedId];
 
         doctor.User.Login = LoginField;
@@ -228,5 +246,7 @@
         LastNameField = string.Empty;
         NumberOfPhoneField = string.Empty;
         SpecialisationField = string.Empty;
+
+        errorMassage = string.Empty;
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/patients"
+@using System.Text.RegularExpressions
 @layout MainLayout
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
@@ -76,6 +77,7 @@
             }
         </select>
     </div>
+    <span>@errorMassage</span>
 </div>
 
 @code {
@@ -92,6 +94,10 @@
     private List<Patient> patients;
     private List<PatientView> patientsView;
 
+    private Regex regexForNumberPhone = new Regex(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private Regex regexForText = new Regex(@"^[а-яА-Я ]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    private string errorMassage;
     private int deletedId;
 
     protected override async Task OnInitializedAsync()
@@ -142,6 +148,12 @@
 
     private async Task Add()
     {
+        if (!regexForNumberPhone.IsMatch(NumberOfPhoneField) || !regexForText.IsMatch(NameField) || !regexForText.IsMatch(FirstNameField) || !regexForText.IsMatch(LastNameField))
+        {
+            errorMassage = "Формат ввода не верный";
+            return;
+        }
+
         var tolons = new List<Tolon>();
 
         var user = new User()
@@ -190,6 +202,12 @@
 
     private async Task Edit()
     {
+        if (!regexForNumberPhone.IsMatch(NumberOfPhoneField) || !regexForText.IsMatch(NameField) || !regexForText.IsMatch(FirstNameField) || !regexForText.IsMatch(LastNameField))
+        {
+            errorMassage = "Формат ввода не верный";
+            return;
+        }
+
         var patient = patients[deletedId];
 
         patient.User.Login = LoginField;
@@ -256,7 +274,7 @@
         FirstNameField = patientsView[deletedId].FirstName;
         LastNameField = patientsView[deletedId].LastName;
         NumberOfPhoneField = patientsView[deletedId].NumberOfPhone;
-        SexField = patientsView[deletedId].Sex;
+        SexField = patients[deletedId].Sex.Value;
 
         StateHasChanged();
     }
@@ -270,6 +288,8 @@
         LastNameField = string.Empty;
         NumberOfPhoneField = string.Empty;
         SexField = string.Empty;
+
+        errorMassage = string.Empty;
     }
 
 

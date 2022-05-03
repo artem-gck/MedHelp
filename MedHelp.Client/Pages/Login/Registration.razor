@@ -1,4 +1,5 @@
 ﻿@page "/registration"
+@using System.Text.RegularExpressions
 @layout LoginLayout
 
 @inject IAuthService _authService
@@ -56,6 +57,9 @@
     private List<Sex> listOfSexes;
     private string errorMassage;
 
+    private Regex regexForNumberPhone = new Regex(@"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private Regex regexForText = new Regex(@"^[а-яА-Я ]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
     protected override async Task OnInitializedAsync()
     {
         listOfSexes = await _basicService.GetAllSexes();
@@ -63,6 +67,12 @@
 
     private async Task RegistrationAsync()
     {
+        if (!regexForNumberPhone.IsMatch(NumberOfPhoneField) || !regexForText.IsMatch(NameField) || !regexForText.IsMatch(FirstNameField) || !regexForText.IsMatch(LastNameField))
+        {
+            errorMassage = "Формат ввода не верный";
+            return;
+        }
+
         var registrationModel = new RegistrationUser()
             {
                 Login = LoginField,
