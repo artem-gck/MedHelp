@@ -89,3 +89,14 @@
     flex-direction: column;
     justify-content: space-between;
 }
+
+.login {
+    display: flex;
+    flex-direction: column;
+}
+
+span {
+    font: 22px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #72737A;
+}

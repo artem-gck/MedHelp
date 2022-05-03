@@ -11,5 +11,7 @@ namespace MedHelp.Services
     {
         public Task<Patient> GetPatient(int id);
         public Task<List<Patient>> GetPatients();
+        public Task<List<Tolon>> GetTolones(int patientId);
+        public Task<List<Reception>> GetReception(int patientId);
     }
 }

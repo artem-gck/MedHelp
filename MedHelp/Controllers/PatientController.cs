@@ -25,5 +25,17 @@ namespace MedHelp.Controllers
         {
             return await _patientService.GetPatient(id);
         }
+
+        [HttpGet("tolon/{id}")]
+        public async Task<ActionResult<List<Tolon>>> GetTolones(int id)
+        {
+            return await _patientService.GetTolones(id);
+        }
+
+        [HttpGet("reception/{id}")]
+        public async Task<ActionResult<List<Reception>>> GetReceptions(int id)
+        {
+            return await _patientService.GetReception(id);
+        }
     }
 }

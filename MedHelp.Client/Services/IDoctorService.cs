@@ -10,5 +10,8 @@ namespace MedHelp.Client.Services
         public Task<int> DeleteDoctor(int id);
         public Task<List<Tolon>> GetTolones(int doctorId);
         public Task<int> AddTolon(Tolon tolon);
+        public Task<int> DeleteTolon(int id);
+        public Task<Tolon> GetTolon(int id);
+        public Task<int> AddReception(Reception reception); 
     }
 }

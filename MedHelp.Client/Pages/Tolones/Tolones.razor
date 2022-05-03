@@ -18,7 +18,10 @@
                                  DataSource="tolonesView"
                                  AutoGenerateColumns="false"
                                  SelectionMode="GridSelectionMode.SingleRow"
-                                 CellClicked="e => OnSelectRowClick(e)">
+                                 CellClicked="e => OnSelectRowClick(e)"
+                                 BorderWidthBottom=0
+                                 BorderWidthLeft=0
+                                 BorderWidthRight=0>
                         <IgbTextColumn Field="PatientName" HeaderText="Имя пациента" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
                         <IgbTextColumn Field="DoctorSpecialisation" HeaderText="Специализация доктора" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
                         <IgbTextColumn Field="DoctorName" HeaderText="Имя доктора" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
@@ -29,19 +32,46 @@
             }
         </div>
         <div class="inputes">
-            <select class="select" @bind="Patient">
-                @if (patients != null)
-                {
-                    @foreach (var patient in patients)
+            @if (role == "doctor")
+            {
+                <select class="select" @bind="Patient">
+                    @if (patients != null)
                     {
-                        <option value="@patient.PatientId">@patient.FirstName</option>
-                    }
+                        @foreach (var patient in patients)
+                        {
+                            <option value="@patient.PatientId">@patient.FirstName</option>
+                        }
                 }
-            </select>
+                </select>
+            }
+            else
+            {
+                <select class="select" @onchange="async e => await FilterDoctor(e)">
+                    @if (specialisations != null)
+                    {
+                        @foreach (var speci in specialisations)
+                        {
+                            <option value="@speci">@speci</option>
+                        }
+                }
+                </select>
+                <select class="select" @bind="doctorId">
+                    @if (doctors != null)
+                    {
+                        @foreach (var doc in doctors)
+                        {
+                            <option value="@doc.DoctorId">@doc.FirstName</option>
+                        }
+                }
+                </select>
+            }
             <input type="datetime" @bind="@Date"></input>
             <button @onclick="async e => await AddTolon()">Добавить толон</button>
-            <button @onclick="async e => await ViewPatient()">Перейти к пациенту</button>
-            <button @onclick="async e => await GetPatient()">Принять пациента</button>
+            <button @onclick="async e => await DeleteTolon()">Удалить толон</button>
+            @if (role == "doctor")
+            {
+                <button @onclick="async e => await GetPatient()">Принять пациента</button>
+            }
         </div>
     </div>
 </div>
@@ -53,16 +83,28 @@
     private List<Tolon> tolones;
     private List<TolonView> tolonesView;
     private List<Patient> patients;
+    private List<Doctor> doctors;
+    private List<string> specialisations;
 
+    private string role;
+    private string spec;
     private int deletedId;
+    private int doctorId;
 
     protected override async Task OnInitializedAsync()
     {
         var login = await localStorage.GetItemAsStringAsync("login");
         login = login.Trim('\"');
+        role = await localStorage.GetItemAsStringAsync("role");
+        role = role.Trim('\"');
         var user = await _authService.GetUser(login);
+        doctors = await _doctorService.GetDoctors();
+        specialisations = doctors.Select(doc => doc.Specialization).Distinct().ToList();
 
-        tolones = await _doctorService.GetTolones(user.Doctor.DoctorId);
+        if (role == "doctor")
+            tolones = await _doctorService.GetTolones(user.Doctor.DoctorId);
+        else
+            tolones = await _patientService.GetTolones(user.Patient.PatientId);
 
         tolonesView = tolones.Select(t => new TolonView()
         {
@@ -74,6 +116,16 @@
         }).ToList();
 
         patients = await _patientService.GetPatients();
+        Patient = patients[0].PatientId;
+        doctorId = doctors[0].DoctorId;
+    }
+
+    private async Task FilterDoctor(ChangeEventArgs e)
+    {
+        doctors = await _doctorService.GetDoctors();
+        doctors = doctors.Where(doc => (string)doc.Specialization == (string)e.Value).ToList();
+        doctorId = doctors[0].DoctorId;
+        StateHasChanged();
     }
 
     private async Task ViewPatient()
@@ -86,16 +138,51 @@
     private async Task GetPatient()
     {
         var patient = tolones[deletedId].Patient;
+        var tolon = tolones[deletedId];
         await localStorage.SetItemAsStringAsync("patientId", patient.PatientId.ToString());
+        await localStorage.SetItemAsStringAsync("tolonId", tolon.TolonId.ToString());
         NavManager.NavigateTo("/tolones/visit");
+    }
+
+    private async Task DeleteTolon()
+    {
+        var tolon = tolones[deletedId];
+        await _doctorService.DeleteTolon(tolon.TolonId);
+
+        if (role == "doctor")
+            tolones = await _doctorService.GetTolones(tolon.Doctor.DoctorId);
+        else
+            tolones = await _patientService.GetTolones(tolon.Patient.PatientId);
+
+        tolonesView = tolones.Select(t => new TolonView()
+        {
+            PatientName = t.Patient.FirstName + " " + t.Patient.Name + " " + t.Patient.LastName,
+            DoctorName = t.Doctor.FirstName + " " + t.Doctor.Name + " " + t.Doctor.LastName,
+            DoctorSpecialisation = t.Doctor.Specialization,
+            Time = t.Time,
+            PatientNumberOfPhone = t.Patient.NumberOfPhone
+        }).ToList();
+
+        StateHasChanged();
     }
 
     private async Task AddTolon()
     {
         var login = await localStorage.GetItemAsStringAsync("login");
         login = login.Trim('\"');
-        var doctor = (await _authService.GetUser(login)).Doctor;
-        var patient = await _patientService.GetPatient(Patient);
+        Doctor doctor;
+        Patient patient;
+
+        if (role == "doctor")
+        {
+            doctor = (await _authService.GetUser(login)).Doctor;
+            patient = await _patientService.GetPatient(Patient);
+        }
+        else
+        {
+            doctor = (await _doctorService.GetDoctors()).FirstOrDefault(doc => doc.DoctorId == doctorId);
+            patient = (await _patientService.GetPatients()).FirstOrDefault(pac => pac.User.Login == login);
+        }
 
         var tolon = new Tolon()
         {
@@ -106,7 +193,10 @@
 
         await _doctorService.AddTolon(tolon);
 
-        tolones = await _doctorService.GetTolones(doctor.DoctorId);
+        if (role == "doctor")
+            tolones = await _doctorService.GetTolones(tolon.Doctor.DoctorId);
+        else
+            tolones = await _patientService.GetTolones(tolon.Patient.PatientId);
 
         tolonesView = tolones.Select(t => new TolonView()
         {

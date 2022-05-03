@@ -27,5 +27,23 @@ namespace MedHelp.Client.Services.Logic
 
             return patients;
         }
+
+        public async Task<List<Reception>> GetReceptions(int patientId)
+        {
+            var resp = await _httpClient.GetAsync($"patient/reception/{patientId}");
+            var receptionsString = await resp.Content.ReadAsStringAsync();
+            var receptions = JsonConvert.DeserializeObject<List<Reception>>(receptionsString);
+
+            return receptions;
+        }
+
+        public async Task<List<Tolon>> GetTolones(int patientId)
+        {
+            var resp = await _httpClient.GetAsync($"patient/tolon/{patientId}");
+            var tolonesString = await resp.Content.ReadAsStringAsync();
+            var tolones = JsonConvert.DeserializeObject<List<Tolon>>(tolonesString);
+
+            return tolones;
+        }
     }
 }

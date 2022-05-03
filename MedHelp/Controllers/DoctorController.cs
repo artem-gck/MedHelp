@@ -48,5 +48,23 @@ namespace MedHelp.Controllers
         {
             return await _doctorService.AddTolon(tolon);
         }
+
+        [HttpDelete("tolon/{id}")]
+        public async Task<ActionResult<int>> DeleteTolon(int id)
+        {
+            return await _doctorService.DeleteTolon(id);
+        }
+
+        [HttpGet("tolon/tolonId/{id}")]
+        public async Task<ActionResult<Tolon>> GetTolon(int id)
+        {
+            return await _doctorService.GetTolon(id);
+        }
+
+        [HttpPost("reception")]
+        public async Task<ActionResult<int>> AddReception(Reception reception)
+        {
+            return await _doctorService.AddReception(reception);
+        }
     }
 }

@@ -51,6 +51,46 @@ namespace MedHelp.Services.Logic
             return await _doctorAccess.AddTolon(MapTolonToEnt(tolon));
         }
 
+        public async Task<int> DeleteTolon(int id)
+        {
+            return await _doctorAccess.DeleteTolon(id);
+        }
+
+        public async Task<Tolon> GetTolon(int id)
+        {
+            var tolon = await _doctorAccess.GetTolon(id);
+            return MapTolonToMod(tolon);
+        }
+
+        public async Task<int> AddReception(Reception reception)
+        {
+            return await _doctorAccess.AddReception(MapReceptionToEnt(reception));
+        }
+
+        private Access.Entity.Reception MapReceptionToEnt(Reception reception)
+        {
+            var tolon = new Access.Entity.Tolon()
+            {
+                TolonId = reception.Tolon.TolonId
+            };
+
+            var disease = new Access.Entity.Disease()
+            {
+                DiseaseId = reception.Disease.DiseaseId,
+                Name = reception.Disease.Name,
+                Description = reception.Disease.Description,
+                Conclusion = reception.Disease.Conclusion,
+            };
+
+            var receptionEnt = new Access.Entity.Reception()
+            {
+                Tolon = tolon,
+                Disease = disease,
+            };
+
+            return receptionEnt;
+        }
+
         private Doctor MapDoctorToMod(Access.Entity.Doctor doctor)
         {
             var tolons = doctor.Tolons.Select(t => new Tolon()

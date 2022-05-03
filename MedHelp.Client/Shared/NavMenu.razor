@@ -1,21 +1,24 @@
 ﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IAuthService _authService;
 
 <div class="@NavMenuCssClass">
     <div class="left-side">
         <div class="login">
-            <span>Login</span>
+            <span>@Login</span>
+            <span>@Role</span>
+            <span>@Specialezation</span>
         </div>
         <div class="navigate">
-                <a href="/tolones" class="link">Толоны</a>
+            <a href="/tolones" class="link">Толоны</a>
+            <a href="/doctors" class="link">Врачи</a>
             @if (role == "doctor")
             {
-                    <a href="/patients" class="link">Пациенты</a>
-                    <a href="/visites" class="link">Приёмы</a>
+                <a href="/patients" class="link">Пациенты</a>
+                <a href="/visites" class="link">Приёмы</a>
             }
             else
             {
-                    <a href="/doctors" class="link">Врачи</a>
-                    <a href="/card" class="link">История болезней</a>
+                <a href="/card" class="link">История болезней</a>
             }
                 <a href="/about" class="link">О себе</a>
         </div>
@@ -26,15 +29,31 @@
 </div>
 
 @code {
+    private string Login { get; set; }
+    private string Role { get; set; }
+    private string Specialezation { get; set; }
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private string role;
+    private User user;
 
     protected override async Task OnInitializedAsync()
     {
         role = await localStorage.GetItemAsStringAsync("role");
+        var login = await localStorage.GetItemAsStringAsync("login");
+        login = login.Trim('\"');
+        role = role.Trim('\"');
+
+        if (role is not null)
+        {
+            user = await _authService.GetUser(login);
+            Login = user.Login;
+            Role = role == "doctor" ? "Врач" : "Пациент";
+            Specialezation = user.Doctor is not null ? user.Doctor.Specialization : string.Empty;
+        }
     }
 
     private async Task Exit()

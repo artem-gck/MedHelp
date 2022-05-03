@@ -4,13 +4,57 @@
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IAuthService _authService
 
+<div>
+    <span>@Login</span>
+    <span>@Password</span>
+    <span>@Name</span>
+    <span>@FirstName</span>
+    <span>@LastName</span>
+    <span>@NumberOfPhone</span>
+    <span>@DateOfDirth</span>
+    <span>@Sex</span>
+    <span>@Specialization</span>
+</div>
+
 @code {
     private User user;
+
+    private string Login { get; set; }
+    private string Password { get; set; }
+    private string Name { get; set; }
+    private string FirstName { get; set; }
+    private string LastName { get; set; }
+    private string NumberOfPhone { get; set; }
+    private DateTime? DateOfDirth { get; set; }
+    private string Sex { get; set; }
+    private string Specialization { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
         var login = await localStorage.GetItemAsStringAsync("login");
         login = login.Trim('\"');
         user = await _authService.GetUser(login);
+
+        Login = user.Login;
+        Password = user.Password;
+
+        if (user.Doctor is not null)
+        {
+            Name = user.Doctor.Name;
+            FirstName = user.Doctor.FirstName;
+            LastName = user.Doctor.LastName;
+            NumberOfPhone = user.Doctor.NumberOfPhone;
+            Specialization = user.Doctor.Specialization;
+        }
+        else
+        {
+            Name = user.Patient.Name;
+            FirstName = user.Patient.FirstName;
+            LastName = user.Patient.LastName;
+            NumberOfPhone = user.Patient.NumberOfPhone;
+            Sex = user.Patient.Sex.Value == "male" ? "Мужской" : "Женский";
+            DateOfDirth = user.Patient.DateOfDirth;
+        }
     }
 }

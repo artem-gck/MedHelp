@@ -30,6 +30,67 @@ namespace MedHelp.Services.Logic
             return patients.Select(pa => MapDoctorToMod(pa)).ToList();
         }
 
+        public async Task<List<Tolon>> GetTolones(int patientId)
+        {
+            var tolones = await _patientAccess.GetTolones(patientId);
+
+            return tolones.Select(t => MapTolonToMod(t)).ToList();
+        }
+
+        public async Task<List<Reception>> GetReception(int patientId)
+        {
+            var receptions = await _patientAccess.GetReceptions(patientId);
+
+            return receptions.Select(rec => MapReceptionToMod(rec)).ToList();
+        }
+
+        private Reception MapReceptionToMod(Access.Entity.Reception reception)
+        {
+            var patient = new Patient()
+            {
+                PatientId = reception.Tolon.Patient.PatientId,
+                Name = reception.Tolon.Patient.Name,
+                FirstName = reception.Tolon.Patient.FirstName,
+                LastName = reception.Tolon.Patient.LastName,
+                NumberOfPhone = reception.Tolon.Patient.NumberOfPhone,
+                DateOfDirth = reception.Tolon.Patient.DateOfDirth,
+            };
+
+            var doctor = new Doctor()
+            {
+                DoctorId = reception.Tolon.Doctor.DoctorId,
+                Name = reception.Tolon.Doctor.Name,
+                FirstName = reception.Tolon.Doctor.FirstName,
+                LastName = reception.Tolon.Doctor.LastName,
+                NumberOfPhone = reception.Tolon.Doctor.NumberOfPhone,
+                Specialization = reception.Tolon.Doctor.Specialization,
+            };
+
+            var tolon = new Tolon()
+            {
+                TolonId = reception.Tolon.TolonId,
+                Patient = patient,
+                Doctor = doctor,
+                Time = reception.Tolon.Time,
+            };
+
+            var disease = new Disease()
+            {
+                DiseaseId = reception.Disease.DiseaseId,
+                Name = reception.Disease.Name,
+                Description = reception.Disease.Description,
+                Conclusion = reception.Disease.Conclusion,
+            };
+
+            var receptionEnt = new Reception()
+            {
+                Tolon = tolon,
+                Disease = disease,
+            };
+
+            return receptionEnt;
+        }
+
         private Patient MapDoctorToMod(Access.Entity.Patient patient)
         {
             var sex = new Sex()
@@ -100,6 +161,39 @@ namespace MedHelp.Services.Logic
             };
 
             return patientMod;
+        }
+
+        private Tolon MapTolonToMod(Access.Entity.Tolon tolon)
+        {
+            var doctorMod = new Doctor()
+            {
+                DoctorId = tolon.Doctor.DoctorId,
+                Name = tolon.Doctor.Name,
+                FirstName = tolon.Doctor.FirstName,
+                LastName = tolon.Doctor.LastName,
+                NumberOfPhone = tolon.Doctor.NumberOfPhone,
+                Specialization = tolon.Doctor.Specialization,
+            };
+
+            var patientMod = new Patient()
+            {
+                PatientId = tolon.Patient.PatientId,
+                Name = tolon.Patient.Name,
+                FirstName = tolon.Patient.FirstName,
+                LastName = tolon.Patient.LastName,
+                NumberOfPhone = tolon.Patient.NumberOfPhone,
+                DateOfDirth = tolon.Patient.DateOfDirth,
+            };
+
+            var tolonMod = new Tolon()
+            {
+                TolonId = tolon.TolonId,
+                Patient = patientMod,
+                Doctor = doctorMod,
+                Time = tolon.Time,
+            };
+
+            return tolonMod;
         }
     }
 }

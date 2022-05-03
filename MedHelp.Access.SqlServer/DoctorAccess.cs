@@ -87,5 +87,33 @@ namespace MedHelp.Access.SqlServer
 
             return to.Entity.TolonId;
         }
+
+        public async Task<int> DeleteTolon(int id)
+        {
+            var tolon = await _medHelpContext.Tolons.FindAsync(id);
+            var tolonDb = _medHelpContext.Tolons.Remove(tolon);
+
+            await _medHelpContext.SaveChangesAsync();
+
+            return tolonDb.Entity.TolonId;
+        }
+
+        public async Task<Tolon> GetTolon(int id)
+        {
+            return await _medHelpContext.Tolons.Include(to => to.Patient)
+                                               .Include(to => to.Doctor)
+                                               .FirstOrDefaultAsync(to => to.TolonId == id);
+        }
+
+        public async Task<int> AddReception(Reception reception)
+        {
+            var tolon = await _medHelpContext.Tolons.FindAsync(reception.Tolon.TolonId);
+            reception.Tolon = tolon;
+
+            var rec = await _medHelpContext.Receptions.AddAsync(reception);
+
+            await _medHelpContext.SaveChangesAsync();
+            return rec.Entity.ReceptionId;
+        }
     }
 }

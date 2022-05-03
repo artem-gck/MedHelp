@@ -1,0 +1,112 @@
+﻿@page "/tolones/visit"
+@layout MainLayout
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IDoctorService _doctorService;
+@inject IAuthService _authService;
+@inject IPatientService _patientService;
+
+<div>
+    <span>@patient.FirstName</span>
+    <span>@patient.Name</span>
+    <span>@patient.LastName</span>
+    <span>@patient.NumberOfPhone</span>
+    <span>@(patient.Sex.Value == "male" ? "Мужской" : "Женский")</span>
+    <span>@patient.DateOfDirth</span>
+
+    <input @bind="@NameOfDisease"></input>
+    <input @bind="@DiscriptionOfDisease"></input>
+    <input @bind="@ConclusionOfDisease"></input>
+    <button @onclick="async e => await AddReception()">Закончить приём</button>
+
+    <div class="container vertical plot">
+        <div class="container vertical" style="--use-accessibility:true;">
+            @if (receptionsView != null)
+            {
+                <div style="overflow: hidden">
+                    <IgbDataGrid Height="800px" 
+                                 Width="1200px"
+                                 DataSource="receptionsView"
+                                 AutoGenerateColumns="false"
+                                 SelectionMode="GridSelectionMode.SingleRow"
+                                 BorderWidthBottom=0
+                                 BorderWidthLeft=0
+                                 BorderWidthRight=0>
+                        <IgbTextColumn Field="DoctorName" HeaderText="Доктор" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="Specialization" HeaderText="Специализация" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbDateTimeColumn Field="Time" HeaderText="Дата" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="NameOfIl" HeaderText="Болезнь" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="Description" HeaderText="Симптомы" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="Conclusion" HeaderText="Лечение" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                    </IgbDataGrid>
+                </div>
+            }
+        </div>
+    </div>
+
+    <button @onclick="Exit">Вернуться</button>
+</div>
+
+@code {
+    private Doctor doctor;
+    private Patient patient;
+    private Tolon tolon;
+    private List<Reception> receptions;
+    private List<ReceptionView> receptionsView;
+
+    private string NameOfDisease { get; set; }
+    private string DiscriptionOfDisease { get; set; }
+    private string ConclusionOfDisease { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var patientId = await localStorage.GetItemAsStringAsync("patientId");
+        var tolonId = await localStorage.GetItemAsStringAsync("tolonId");
+        var role = await localStorage.GetItemAsStringAsync("role");
+        var doctorLogin = await localStorage.GetItemAsStringAsync("login");
+        role = role.Trim('\"');
+        doctorLogin = doctorLogin.Trim('\"');
+        await localStorage.RemoveItemsAsync(new string[]{ "patientId", "tolonId" });
+
+        receptions = await _patientService.GetReceptions(int.Parse(patientId));
+
+        receptionsView = receptions.Select(rec => new ReceptionView()
+        {
+            DoctorName = rec.Tolon.Doctor.FirstName + " " + rec.Tolon.Doctor.Name + " " + rec.Tolon.Doctor.LastName,
+            Specialization = rec.Tolon.Doctor.Specialization,
+            Time = rec.Tolon.Time,
+            NameOfIl = rec.Disease.Name,
+            Description = rec.Disease.Description,
+            Conclusion = rec.Disease.Conclusion
+        }).ToList();
+
+        doctor = (await _authService.GetUser(doctorLogin)).Doctor;
+        patient = await _patientService.GetPatient(int.Parse(patientId));
+        tolon = await _doctorService.GetTolon(int.Parse(tolonId));
+    }
+
+    private async Task AddReception()
+    {
+        var disease = new Disease()
+            {
+                Name = NameOfDisease,
+                Description = DiscriptionOfDisease,
+                Conclusion = ConclusionOfDisease
+            };
+
+        var reception = new Reception()
+            {
+                Tolon = tolon,
+                Disease = disease
+            };
+
+        await _doctorService.AddReception(reception);
+
+        NavManager.NavigateTo("/tolones");
+    }
+
+    private void Exit()
+    {
+        NavManager.NavigateTo("/tolones");
+    }
+}

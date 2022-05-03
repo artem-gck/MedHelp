@@ -33,5 +33,25 @@ namespace MedHelp.Access.SqlServer
                                                  .Include(pa => pa.Tolons)
                                                  .ToListAsync();
         }
+
+        public async Task<List<Tolon>> GetTolones(int patientId)
+        {
+            return await _medHelpContext.Tolons.Include(t => t.Doctor)
+                                               .Include(t => t.Patient)
+                                               .ThenInclude(p => p.Sex)
+                                               .Where(t => t.Patient.PatientId == patientId)
+                                               .ToListAsync();
+        }
+
+        public async Task<List<Reception>> GetReceptions(int idPatient)
+        {
+            return await _medHelpContext.Receptions.Include(rec => rec.Disease)
+                                                   .Include(rec => rec.Tolon)
+                                                   .ThenInclude(tol => tol.Patient)
+                                                   .Include(rec => rec.Tolon)
+                                                   .ThenInclude(tol => tol.Doctor)
+                                                   .Where(rec => rec.Tolon.Patient.PatientId == idPatient)
+                                                   .ToListAsync();
+        }
     }
 }

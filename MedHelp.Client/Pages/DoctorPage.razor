@@ -1,6 +1,7 @@
 ﻿@page "/doctors"
 @layout MainLayout
 
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IIgniteUIBlazor IgniteUIBlazor
 @inject IDoctorService _doctorService;
 
@@ -15,7 +16,10 @@
                                  DataSource="doctorsView"
                                  AutoGenerateColumns="false"
                                  SelectionMode="GridSelectionMode.SingleRow"
-                                 CellClicked="e => OnSelectRowClick(e)">
+                                 CellClicked="e => OnSelectRowClick(e)"
+                                 BorderWidthBottom=0
+                                 BorderWidthLeft=0
+                                 BorderWidthRight=0>
                         <IgbTextColumn Field="Login" HeaderText="Логин" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
                         <IgbTextColumn Field="Password" HeaderText="Пароль" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
                         <IgbTextColumn Field="FirstName" HeaderText="Фамилия" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
@@ -28,37 +32,42 @@
                 </div>
             }
         </div>
-        <div class="buttons">
-            <button @onclick="async e => await Add()">Добавить</button>
-            <button @onclick="async e => await Edit()">Изменить</button>
-            <button @onclick="async e => await Delete()">Удалить</button>
-        </div>
+        @if(role == "doctor")
+        {
+            <div class="buttons">
+                <button @onclick="async e => await Add()">Добавить</button>
+                <button @onclick="async e => await Edit()">Изменить</button>
+                <button @onclick="async e => await Delete()">Удалить</button>
+            </div>
+        }
     </div>
+    @if (role == "doctor")
+    {
+        <div class="inputes">
+            <div class="inputes-cont">
+                <span class="lables">Логин</span>
+                <input type="text" @bind="@LoginField"></input>
 
-    <div class="inputes">
-        <div class="inputes-cont">
-            <span class="lables">Логин</span>
-            <input type="text" @bind="@LoginField"></input>
+                <span class="lables">Пароль</span>
+                <input type="text" @bind="@PasswordField"></input>
 
-            <span class="lables">Пароль</span>
-            <input type="text" @bind="@PasswordField"></input>
+                <span class="lables">Имя</span>
+                <input type="text" @bind="@NameField"></input>
 
-            <span class="lables">Имя</span>
-            <input type="text" @bind="@NameField"></input>
+                <span class="lables">Фамилия</span>
+                <input type="text" @bind="@FirstNameField"></input>
 
-            <span class="lables">Фамилия</span>
-            <input type="text" @bind="@FirstNameField"></input>
+                <span class="lables">Отчество</span>
+                <input type="text" @bind="@LastNameField"></input>
 
-            <span class="lables">Отчество</span>
-            <input type="text" @bind="@LastNameField"></input>
+                <span class="lables">Номер телефона</span>
+                <input type="text" @bind="@NumberOfPhoneField"></input>
 
-            <span class="lables">Номер телефона</span>
-            <input type="text" @bind="@NumberOfPhoneField"></input>
-
-            <span class="lables">Специализация</span>
-            <input type="text" @bind="@SpecialisationField"></input>
+                <span class="lables">Специализация</span>
+                <input type="text" @bind="@SpecialisationField"></input>
+            </div>
         </div>
-    </div>
+    }
 
 </div>
 
@@ -71,12 +80,16 @@
     private string NumberOfPhoneField { get; set; }
     private string SpecialisationField { get; set; }
 
+    private string role;
     private int deletedId;
     private List<Doctor> doctors;
     private List<DoctorView> doctorsView;
 
     protected override async Task OnInitializedAsync()
     {
+        role = await localStorage.GetItemAsStringAsync("role");
+        role = role.Trim('\"');
+
         doctors = await _doctorService.GetDoctors();
 
         doctorsView = doctors.Select(doc => new DoctorView()
