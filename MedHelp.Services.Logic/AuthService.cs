@@ -199,6 +199,7 @@ namespace MedHelp.Services.Logic
         {
             var userMod = new User()
             {
+                UserId = user.UserId,
                 Login = user.Login,
                 Password = user.Password,
             };
@@ -207,6 +208,7 @@ namespace MedHelp.Services.Logic
             {
                 var doctor = new Doctor()
                 {
+                    DoctorId = user.Doctor.DoctorId,
                     Name = user.Doctor.Name,
                     FirstName = user.Doctor.FirstName,
                     LastName = user.Doctor.LastName,
@@ -220,11 +222,13 @@ namespace MedHelp.Services.Logic
             {
                 var sex = new Sex()
                 {
+                    SexId = user.Patient.Sex.SexId,
                     Value = user.Patient.Sex.Value
                 };
 
                 var patient = new Patient()
                 {
+                    PatientId = user.Patient.PatientId,
                     Name = user.Patient.Name,
                     FirstName = user.Patient.FirstName,
                     LastName = user.Patient.LastName,

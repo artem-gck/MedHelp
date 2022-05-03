@@ -41,10 +41,10 @@ namespace MedHelp.Controllers
         [HttpGet]
         public async Task<ActionResult<List<User>>> GetUsersAsync()
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
+            //if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
                 return await _authService.GetUsersAsync();
-            else
-                return Unauthorized();
+            //else
+            //    return Unauthorized();
         }
 
         [HttpPost]
@@ -78,55 +78,47 @@ namespace MedHelp.Controllers
         [HttpPut]
         public async Task<ActionResult<int>> UpdateUserAsync([FromBody] User user)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
+
                 return await _authService.UpdateUserAsync(user);
-            else
-                return Unauthorized();
+
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<int>> DeleteUserAsync(int id)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
+
                 return await _authService.DeleteUserAsync(id);
-            else
-                return Unauthorized();
+
         }
 
         [HttpGet("user")]
         public async Task<ActionResult<User>> GetUser(string login)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
-                return await _authService.GetUser(login);
-            else
-                return Unauthorized();
+
+            return await _authService.GetUser(login);
+
         }
 
-        [HttpGet("roles")]
+        [HttpGet("sexes")]
         public async Task<ActionResult<List<Sex>>> GetAllSexes()
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
-                return await _authService.GetAllSexes();
-            else
-                return Unauthorized();
+            return await _authService.GetAllSexes();
         }
 
         [HttpPost("add")]
         public async Task<ActionResult<int>> AddUserAsync([FromBody] User user)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
+
                 return await _authService.AddUserAsync(user);
-            else
-                return Unauthorized();
+
         }
 
         [HttpGet("search/{search}")]
         public async Task<ActionResult<List<User>>> SearchUsersAsync(string search)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
+
                 return await _authService.SearchUsersAsync(search);
-            else
-                return Unauthorized();
+
         }
     }
 }

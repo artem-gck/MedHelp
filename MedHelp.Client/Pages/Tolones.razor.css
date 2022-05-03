@@ -1,0 +1,58 @@
+﻿button {
+    background-color: #14566D;
+    border: 0px;
+    border-radius: 15px;
+    height: 35px;
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: white;
+    width: 200px;
+    margin-right: 25px;
+}
+
+input {
+    width: 200px;
+    border: 0px;
+    border-radius: 15px;
+    height: 35px;
+    font-size: 18px;
+    font-family: "SF Compact Text", sans-serif;
+    padding-left: 10px;
+    background-color: white;
+    margin-right: 25px;
+}
+
+input:focus {
+    outline: none !important
+}
+
+.select {
+    background-color: white;
+    border-radius: 15px;
+    border: 0px;
+    width: 200px;
+    height: 35px;
+    padding-left: 10px;
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: black;
+    margin-right: 25px;
+}
+
+.inputes {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-left: 50px;
+}
+
+.plot {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.doctors {
+    height: 100%;
+}

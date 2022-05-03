@@ -1,0 +1,33 @@
+﻿.login-base {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    background-image: url("../images/loginBac.png");
+    background-size: contain;
+}
+
+.left-side {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.right-side {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.lable {
+    font: 100px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #FFFFFF;
+}

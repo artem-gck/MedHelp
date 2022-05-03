@@ -12,8 +12,12 @@ builder.Services.AddDbContext<MedHelpContext>(opt =>
 
 builder.Services.AddTransient<IAuthService, AuthService>(); 
 builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IDoctorService, DoctorService>();
+builder.Services.AddTransient<IPatientService, PatientService>();
 
 builder.Services.AddTransient<IAuthAccess, AuthAccess>();
+builder.Services.AddTransient<IDoctorAccess, DoctorAccess>();
+builder.Services.AddTransient<IPatientAccess, PatientAccess>();
 
 builder.Services.AddCors();
 

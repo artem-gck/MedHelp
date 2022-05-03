@@ -1,0 +1,49 @@
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<div class="@NavMenuCssClass">
+    <div class="left-side">
+        <div class="login">
+            <span>Login</span>
+        </div>
+        <div class="navigate">
+                <a href="/tolones" class="link">Толоны</a>
+            @if (role == "doctor")
+            {
+                    <a href="/patients" class="link">Пациенты</a>
+                    <a href="/visites" class="link">Приёмы</a>
+            }
+            else
+            {
+                    <a href="/doctors" class="link">Врачи</a>
+                    <a href="/card" class="link">История болезней</a>
+            }
+                <a href="/about" class="link">О себе</a>
+        </div>
+        <div class="exit">
+                <a href="/login" class="link" @onclick="async e => await Exit()">Выйти из аккаунта</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private string role;
+
+    protected override async Task OnInitializedAsync()
+    {
+        role = await localStorage.GetItemAsStringAsync("role");
+    }
+
+    private async Task Exit()
+    {
+        await localStorage.RemoveItemAsync("access_token");
+        await localStorage.RemoveItemAsync("refresh_token");
+        await localStorage.RemoveItemAsync("login");
+        await localStorage.RemoveItemAsync("role");
+
+        NavManager.NavigateTo("/login");
+    }
+}

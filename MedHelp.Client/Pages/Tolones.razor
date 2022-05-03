@@ -1,0 +1,127 @@
+﻿@page "/tolones"
+@layout MainLayout
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IIgniteUIBlazor IgniteUIBlazor
+@inject IDoctorService _doctorService;
+@inject IAuthService _authService;
+@inject IPatientService _patientService;
+
+<div class="doctors">
+    <div class="container vertical plot">
+        <div class="container vertical" style="--use-accessibility:true;">
+            @if (tolonesView != null)
+            {
+                <div style="overflow: hidden">
+                    <IgbDataGrid Height="800px" 
+                                 Width="1200px"
+                                 DataSource="tolonesView"
+                                 AutoGenerateColumns="false"
+                                 SelectionMode="GridSelectionMode.SingleRow"
+                                 CellClicked="e => OnSelectRowClick(e)">
+                        <IgbTextColumn Field="PatientName" HeaderText="Имя пациента" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="DoctorSpecialisation" HeaderText="Специализация доктора" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="DoctorName" HeaderText="Имя доктора" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbDateTimeColumn Field="Time" HeaderText="Время" Width="@("*>100")" DateTimeFormat="DateTimeFormats.DateTimeShort" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="PatientNumberOfPhone" HeaderText="Номер пациента" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                    </IgbDataGrid>
+                </div>
+            }
+        </div>
+        <div class="inputes">
+            <select class="select" @bind="Patient">
+                @if (patients != null)
+                {
+                    @foreach (var patient in patients)
+                    {
+                        <option value="@patient.PatientId">@patient.FirstName</option>
+                    }
+                }
+            </select>
+            <input type="datetime" @bind="@Date"></input>
+            <button @onclick="async e => await AddTolon()">Добавить толон</button>
+            <button @onclick="async e => await ViewPatient()">Перейти к пациенту</button>
+            <button @onclick="async e => await GetPatient()">Принять пациента</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private DateTime Date { get; set; } = DateTime.Now;
+    private int Patient { get; set; }
+
+    private List<Tolon> tolones;
+    private List<TolonView> tolonesView;
+    private List<Patient> patients;
+
+    private int deletedId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var login = await localStorage.GetItemAsStringAsync("login");
+        login = login.Trim('\"');
+        var user = await _authService.GetUser(login);
+
+        tolones = await _doctorService.GetTolones(user.Doctor.DoctorId);
+
+        tolonesView = tolones.Select(t => new TolonView()
+        {
+            PatientName = t.Patient.FirstName + " " + t.Patient.Name + " " + t.Patient.LastName,
+            DoctorName = t.Doctor.FirstName + " " + t.Doctor.Name + " " + t.Doctor.LastName,
+            DoctorSpecialisation = t.Doctor.Specialization,
+            Time = t.Time,
+            PatientNumberOfPhone = t.Patient.NumberOfPhone
+        }).ToList();
+
+        patients = await _patientService.GetPatients();
+    }
+
+    private async Task ViewPatient()
+    {
+        var patient = tolones[deletedId].Patient;
+        await localStorage.SetItemAsStringAsync("patientId", patient.PatientId.ToString());
+        NavManager.NavigateTo("/tolones/patient");
+    }
+
+    private async Task GetPatient()
+    {
+        var patient = tolones[deletedId].Patient;
+        await localStorage.SetItemAsStringAsync("patientId", patient.PatientId.ToString());
+        NavManager.NavigateTo("/tolones/visit");
+    }
+
+    private async Task AddTolon()
+    {
+        var login = await localStorage.GetItemAsStringAsync("login");
+        login = login.Trim('\"');
+        var doctor = (await _authService.GetUser(login)).Doctor;
+        var patient = await _patientService.GetPatient(Patient);
+
+        var tolon = new Tolon()
+        {
+            Patient = patient,
+            Doctor = doctor,
+            Time = Date,
+        };
+
+        await _doctorService.AddTolon(tolon);
+
+        tolones = await _doctorService.GetTolones(doctor.DoctorId);
+
+        tolonesView = tolones.Select(t => new TolonView()
+        {
+            PatientName = t.Patient.FirstName + " " + t.Patient.Name + " " + t.Patient.LastName,
+            DoctorName = t.Doctor.FirstName + " " + t.Doctor.Name + " " + t.Doctor.LastName,
+            DoctorSpecialisation = t.Doctor.Specialization,
+            Time = t.Time,
+            PatientNumberOfPhone = t.Patient.NumberOfPhone
+        }).ToList();
+
+        StateHasChanged();
+    }
+
+    private void OnSelectRowClick(IgbGridCellEventArgs e)
+    {
+        deletedId = e.CellInfo.DataRow;
+    }
+}

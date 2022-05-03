@@ -1,0 +1,51 @@
+﻿@page "/login"
+@layout LoginLayout
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IAuthService _authService
+
+<div class="login-form">
+    <span class="input">Вход в аккаунт</span>
+    <div class="inputs">
+        <span class="lables">Логин</span>
+        <input type="text" @bind="@LoginField"></input>
+        <span class="lables">Пароль</span>
+        <input type="password" @bind="@PasswordField"></input>
+        <span class="error">@errorMassage</span>
+        <div class="forgotPasswordPlace">
+            <a href="/registration" class="registrationLink">Нет аккаунта?</a>
+        </div>
+    </div>
+    <button @onclick="async e => await LoginAsync()">Авторизация</button>
+</div>
+
+@code {
+    private string LoginField { get; set; }
+    private string PasswordField { get; set; }
+
+    private string errorMassage;
+
+    private async Task LoginAsync()
+    {
+        var loginModel = new LoginModel()
+        {
+            Login = LoginField,
+            Password = PasswordField
+        };
+
+        var tokens = await _authService.Login(loginModel);
+
+        if (string.IsNullOrWhiteSpace(tokens.AccessToken))
+        {
+            errorMassage = "Логин или пароль не подходят";
+            return;
+        }
+
+        await localStorage.SetItemAsync("access_token", tokens.AccessToken);
+        await localStorage.SetItemAsync("refresh_token", tokens.RefreshToken);
+        await localStorage.SetItemAsync("login", tokens.Login);
+        await localStorage.SetItemAsync("role", tokens.Role);
+
+        NavManager.NavigateTo("/about");
+    }
+}

@@ -1,0 +1,219 @@
+﻿@page "/doctors"
+@layout MainLayout
+
+@inject IIgniteUIBlazor IgniteUIBlazor
+@inject IDoctorService _doctorService;
+
+<div class="doctors">
+    <div class="container vertical plot">
+        <div class="container vertical" style="--use-accessibility:true;">
+            @if (doctorsView != null)
+            {
+                <div style="overflow: hidden">
+                    <IgbDataGrid Height="800px" 
+                                 Width="1200px"
+                                 DataSource="doctorsView"
+                                 AutoGenerateColumns="false"
+                                 SelectionMode="GridSelectionMode.SingleRow"
+                                 CellClicked="e => OnSelectRowClick(e)">
+                        <IgbTextColumn Field="Login" HeaderText="Логин" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="Password" HeaderText="Пароль" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="FirstName" HeaderText="Фамилия" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="Name" HeaderText="Имя" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="LastName" HeaderText="Отчество" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="NumberOfPhone" HeaderText="Номер телефона" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbTextColumn Field="Specialization" HeaderText="Специализация" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        <IgbNumericColumn Field="Tolons" HeaderText="Всего толонов" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                    </IgbDataGrid>
+                </div>
+            }
+        </div>
+        <div class="buttons">
+            <button @onclick="async e => await Add()">Добавить</button>
+            <button @onclick="async e => await Edit()">Изменить</button>
+            <button @onclick="async e => await Delete()">Удалить</button>
+        </div>
+    </div>
+
+    <div class="inputes">
+        <div class="inputes-cont">
+            <span class="lables">Логин</span>
+            <input type="text" @bind="@LoginField"></input>
+
+            <span class="lables">Пароль</span>
+            <input type="text" @bind="@PasswordField"></input>
+
+            <span class="lables">Имя</span>
+            <input type="text" @bind="@NameField"></input>
+
+            <span class="lables">Фамилия</span>
+            <input type="text" @bind="@FirstNameField"></input>
+
+            <span class="lables">Отчество</span>
+            <input type="text" @bind="@LastNameField"></input>
+
+            <span class="lables">Номер телефона</span>
+            <input type="text" @bind="@NumberOfPhoneField"></input>
+
+            <span class="lables">Специализация</span>
+            <input type="text" @bind="@SpecialisationField"></input>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    private string LoginField { get; set; }
+    private string PasswordField { get; set; }
+    private string NameField { get; set; }
+    private string FirstNameField { get; set; }
+    private string LastNameField { get; set; }
+    private string NumberOfPhoneField { get; set; }
+    private string SpecialisationField { get; set; }
+
+    private int deletedId;
+    private List<Doctor> doctors;
+    private List<DoctorView> doctorsView;
+
+    protected override async Task OnInitializedAsync()
+    {
+        doctors = await _doctorService.GetDoctors();
+
+        doctorsView = doctors.Select(doc => new DoctorView()
+        {
+                Name = doc.Name,
+                FirstName = doc.FirstName,
+                LastName = doc.LastName,
+                NumberOfPhone = doc.NumberOfPhone,
+                Specialization = doc.Specialization,
+                Login = doc.User.Login,
+                Password = doc.User.Password,
+                Tolons = doc.Tolons.Count
+        }).ToList();
+    }
+
+    private async Task Add()
+    {
+        var tolons = new List<Tolon>();
+
+        var user = new User()
+            {
+                Login = LoginField,
+                Password = PasswordField,
+            };
+
+        var doctor = new Doctor()
+            {
+                Name = NameField,
+                FirstName = FirstNameField,
+                LastName = LastNameField,
+                NumberOfPhone = NumberOfPhoneField,
+                Specialization = SpecialisationField,
+                User = user,
+                Tolons = tolons
+            };
+
+        var id = await _doctorService.AddDoctor(doctor);
+
+        doctors = await _doctorService.GetDoctors();
+
+        doctorsView = doctors.Select(doc => new DoctorView()
+        {
+                Name = doc.Name,
+                FirstName = doc.FirstName,
+                LastName = doc.LastName,
+                NumberOfPhone = doc.NumberOfPhone,
+                Specialization = doc.Specialization,
+                Login = doc.User.Login,
+                Password = doc.User.Password,
+                Tolons = doc.Tolons.Count
+        }).ToList();
+
+        ClearFields();
+
+        StateHasChanged();
+    }
+
+    private async Task Edit()
+    {
+        var doctor = doctors[deletedId];
+
+        doctor.User.Login = LoginField;
+        doctor.User.Password = PasswordField;
+
+        doctor.Name = NameField;
+        doctor.FirstName = FirstNameField;
+        doctor.LastName = LastNameField;
+        doctor.NumberOfPhone = NumberOfPhoneField;
+        doctor.Specialization = SpecialisationField;
+
+        var id = await _doctorService.UpdateDoctor(doctor);
+
+        doctors = await _doctorService.GetDoctors();
+
+        doctorsView = doctors.Select(doc => new DoctorView()
+        {
+                Name = doc.Name,
+                FirstName = doc.FirstName,
+                LastName = doc.LastName,
+                NumberOfPhone = doc.NumberOfPhone,
+                Specialization = doc.Specialization,
+                Login = doc.User.Login,
+                Password = doc.User.Password,
+                Tolons = doc.Tolons.Count
+        }).ToList();
+
+        ClearFields();
+
+        StateHasChanged();
+    }
+
+    private async Task Delete()
+    {
+        var id = await _doctorService.DeleteDoctor(doctors[deletedId].DoctorId);
+
+        doctors = await _doctorService.GetDoctors();
+
+        doctorsView = doctors.Select(doc => new DoctorView()
+        {
+                Name = doc.Name,
+                FirstName = doc.FirstName,
+                LastName = doc.LastName,
+                NumberOfPhone = doc.NumberOfPhone,
+                Specialization = doc.Specialization,
+                Login = doc.User.Login,
+                Password = doc.User.Password,
+                Tolons = doc.Tolons.Count
+        }).ToList();
+
+        ClearFields();
+
+        StateHasChanged();
+    }
+
+    private void OnSelectRowClick(IgbGridCellEventArgs e)
+    {
+        deletedId = e.CellInfo.DataRow;
+
+        LoginField = doctorsView[deletedId].Login;
+        PasswordField = doctorsView[deletedId].Password;
+        NameField = doctorsView[deletedId].Name;
+        FirstNameField = doctorsView[deletedId].FirstName;
+        LastNameField = doctorsView[deletedId].LastName;
+        NumberOfPhoneField = doctorsView[deletedId].NumberOfPhone;
+        SpecialisationField = doctorsView[deletedId].Specialization;
+
+        StateHasChanged();
+    }
+
+    private void ClearFields()
+    {
+        LoginField = string.Empty;
+        PasswordField = string.Empty;
+        NameField = string.Empty;
+        FirstNameField = string.Empty;
+        LastNameField = string.Empty;
+        NumberOfPhoneField = string.Empty;
+        SpecialisationField = string.Empty;
+    }
+}

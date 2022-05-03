@@ -1,0 +1,87 @@
+﻿@page "/registration"
+@layout LoginLayout
+
+@inject IAuthService _authService
+@inject IBasicService _basicService
+
+<div class="login-form">
+    <span class="input">Регистрация</span>
+    <div class="inputs">
+        <span class="lables">Логин</span>
+        <input type="text" @bind="@LoginField"></input>
+
+        <span class="lables">Пароль</span>
+        <input type="password" @bind="@PasswordField"></input>
+
+        <span class="lables">Имя</span>
+        <input type="text" @bind="@NameField"></input>
+
+        <span class="lables">Фамилия</span>
+        <input type="password" @bind="@FirstNameField"></input>
+
+        <span class="lables">Отчество</span>
+        <input type="text" @bind="@LastNameField"></input>
+
+        <span class="lables">Номер телефона</span>
+        <input type="password" @bind="@NumberOfPhoneField"></input>
+
+        <span class="lables">Пол</span>
+        <select class="select" @bind="SexField">
+            @if (listOfSexes != null)
+            {
+                @foreach (var sex in listOfSexes)
+                {
+                    <option value="@sex.Value">@sex.Value</option>
+                }
+            }
+        </select>
+
+        <span class="error">@errorMassage</span>
+        <div class="forgotPasswordPlace">
+            <a href="/login" class="registrationLink">Авторизация</a>
+        </div>
+    </div>
+    <button @onclick="async e => await RegistrationAsync()">Регистрация</button>
+</div>
+
+@code {
+    private string LoginField { get; set; }
+    private string PasswordField { get; set; }
+    private string NameField { get; set; }
+    private string FirstNameField { get; set; }
+    private string LastNameField { get; set; }
+    private string NumberOfPhoneField { get; set; }
+    private string SexField { get; set; }
+
+    private List<Sex> listOfSexes;
+    private string errorMassage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listOfSexes = await _basicService.GetAllSexes();
+    }
+
+    private async Task RegistrationAsync()
+    {
+        var registrationModel = new RegistrationUser()
+            {
+                Login = LoginField,
+                Password = PasswordField,
+                Name = NameField,
+                FirstName = FirstNameField,
+                LastName = LastNameField,
+                NumberOfPhone = NumberOfPhoneField,
+                Sex = SexField
+            };
+
+        var id = await _authService.Registration(registrationModel);
+
+        if (id < 1)
+        {
+            errorMassage = "Что-то пошло не так";
+            return;
+        }
+
+        NavManager.NavigateTo("/login");
+    }
+}

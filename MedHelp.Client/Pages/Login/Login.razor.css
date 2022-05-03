@@ -1,0 +1,58 @@
+﻿.login-form {
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.input {
+    font: 36px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #FFFFFF;
+}
+
+button {
+    background-color: #1FD882;
+    border: 0px;
+    border-radius: 15px;
+    height: 40px;
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: white;
+    width: 300px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: left;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.lables {
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #FFFFFF;
+}
+
+input {
+    width: 300px;
+    border: 0px;
+    border-radius: 15px;
+    height: 35px;
+    font-size: 18px;
+    font-family: "SF Compact Text", sans-serif;
+    padding-left: 10px;
+    background-color: #FFFFFF;
+    opacity: 0.2;
+    margin-bottom: 20px;
+}
+
+input:focus {
+    outline: none !important
+}

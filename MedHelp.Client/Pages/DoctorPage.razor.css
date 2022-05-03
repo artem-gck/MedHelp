@@ -1,0 +1,61 @@
+﻿button {
+    background-color: #14566D;
+    border: 0px;
+    border-radius: 15px;
+    height: 35px;
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: white;
+    width: 200px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.doctors {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.lables {
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: black;
+}
+
+.inputes {
+    display: flex;
+    flex-direction: column;
+    justify-content:space-around;
+    height: 100%;
+}
+
+.inputes-cont {
+    display: flex;
+    flex-direction: column;
+    height: 60%;
+}
+
+input {
+    width: 250px;
+    border: 0px;
+    border-radius: 15px;
+    height: 35px;
+    font-size: 18px;
+    font-family: "SF Compact Text", sans-serif;
+    padding-left: 10px;
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.plot {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}

@@ -1,0 +1,16 @@
+﻿@page "/about"
+@layout MainLayout
+
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IAuthService _authService
+
+@code {
+    private User user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var login = await localStorage.GetItemAsStringAsync("login");
+        login = login.Trim('\"');
+        user = await _authService.GetUser(login);
+    }
+}
