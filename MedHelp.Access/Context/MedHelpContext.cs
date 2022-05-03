@@ -24,6 +24,7 @@ namespace MedHelp.Access.Context
         public DbSet<Tolon> Tolons { get; set; } = null!;
         public DbSet<Disease> Diseases { get; set; } = null!;
         public DbSet<Reception> Receptions { get; set; } = null!;
+        public DbSet<Comment> Comments { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

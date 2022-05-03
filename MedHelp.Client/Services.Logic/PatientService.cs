@@ -65,6 +65,15 @@ namespace MedHelp.Client.Services.Logic
             return tolones;
         }
 
+        public async Task<List<Patient>> Search(string search)
+        {
+            var resp = await _httpClient.GetAsync($"patient/search?search={search}");
+            var searchString = await resp.Content.ReadAsStringAsync();
+            var tolones = JsonConvert.DeserializeObject<List<Patient>>(searchString);
+
+            return tolones;
+        }
+
         public async Task<int> UpdatePatient(Patient patient)
         {
             var resp = await _httpClient.PutAsJsonAsync($"patient", patient);

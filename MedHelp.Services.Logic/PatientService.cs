@@ -59,6 +59,13 @@ namespace MedHelp.Services.Logic
             return await _patientAccess.AddPatient(MapDoctorToEnt(patient));
         }
 
+        public async Task<List<Patient>> Search(string searchString)
+        {
+            var patients = await _patientAccess.Search(searchString);
+
+            return patients.Select(pat => MapDoctorToMod(pat)).ToList();
+        }
+
         private Reception MapReceptionToMod(Access.Entity.Reception reception)
         {
             var patient = new Patient()

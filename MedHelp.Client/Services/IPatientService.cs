@@ -11,5 +11,6 @@ namespace MedHelp.Client.Services
         public Task<int> UpdatePatient(Patient patient);
         public Task<int> DeletePatient(int id);
         public Task<int> AddPatient(Patient patient);
+        public Task<List<Patient>> Search(string search);
     }
 }

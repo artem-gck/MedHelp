@@ -1,0 +1,16 @@
+﻿using MedHelp.Services.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MedHelp.Services
+{
+    public interface ICommentService
+    {
+        public Task<int> AddComment(Comment comment);
+        public Task<List<Comment>> GetCommentsByDoctor(int doctorId);
+        public Task<List<Comment>> GetCommentsByPatient(int patientId);
+    }
+}

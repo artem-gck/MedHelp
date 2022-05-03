@@ -3,6 +3,8 @@
 
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IAuthService _authService
+@inject IDoctorService _doctorService
+@inject ICommentService _commentService
 
 <div>
     <span>@Login</span>
@@ -16,8 +18,59 @@
     <span>@Specialization</span>
 </div>
 
+<div class="container vertical plot">
+    <div class="container vertical" style="--use-accessibility:true;">
+        @if (commentsView != null)
+        {
+            <div style="overflow: hidden">
+                <IgbDataGrid Height="800px" 
+                                Width="1200px"
+                                DataSource="commentsView"
+                                AutoGenerateColumns="false"
+                                SelectionMode="GridSelectionMode.SingleRow"
+                                CellClicked="e => OnSelectRowClick(e)"
+                                BorderWidthBottom=0
+                                BorderWidthLeft=0
+                                BorderWidthRight=0>
+                    <IgbTextColumn Field="Name" HeaderText="Имя" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Left" />
+                    <IgbTextColumn Field="Text" HeaderText="Комментарий" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Left" />
+                </IgbDataGrid>
+            </div>
+        }
+    </div>
+</div>
+
+@if (user.Doctor is null)
+{
+    <select class="select" @onchange="async e => await FilterDoctor(e)">
+        @if (specialisations != null)
+        {
+            @foreach (var speci in specialisations)
+            {
+                <option value="@speci">@speci</option>
+            }
+
+        }
+    </select>
+    <select class="select" @bind="doctorId">
+        @if (doctors != null)
+        {
+            @foreach (var doc in doctors)
+            {
+                <option value="@doc.DoctorId">@doc.FirstName</option>
+            }
+
+        }
+    </select>
+
+    <input @bind="@Comment"></input>
+    <button @onclick="async e => await Add()">Добавить</button>
+    <span>@errorMassage</span>
+}
+
 @code {
     private User user;
+    private string errorMassage;
 
     private string Login { get; set; }
     private string Password { get; set; }
@@ -29,6 +82,16 @@
     private string Sex { get; set; }
     private string Specialization { get; set; }
 
+    private string Comment { get; set; }
+
+    private List<Comment> comments;
+    private List<CommentView> commentsView;
+    private List<string> specialisations;
+    private List<Doctor> doctors;
+
+    private int doctorId;
+    private string speci;
+    private int deletedId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,6 +101,8 @@
 
         Login = user.Login;
         Password = user.Password;
+        doctors = await _doctorService.GetDoctors();
+        specialisations = doctors.Select(doc => doc.Specialization).Distinct().ToList();
 
         if (user.Doctor is not null)
         {
@@ -46,6 +111,13 @@
             LastName = user.Doctor.LastName;
             NumberOfPhone = user.Doctor.NumberOfPhone;
             Specialization = user.Doctor.Specialization;
+
+            comments = await _commentService.GetCommentsByDoctor(user.Doctor.DoctorId);
+            commentsView = comments.Select(com => new CommentView()
+            {
+                Name = com.Patient.FirstName + " " + com.Patient.Name,
+                Text = com.CommentText
+            }).ToList();
         }
         else
         {
@@ -55,6 +127,79 @@
             NumberOfPhone = user.Patient.NumberOfPhone;
             Sex = user.Patient.Sex.Value == "male" ? "Мужской" : "Женский";
             DateOfDirth = user.Patient.DateOfDirth;
+
+            comments = await _commentService.GetCommentsByPatient(user.Patient.PatientId);
+            commentsView = comments.Select(com => new CommentView()
+            {
+                Name = com.Doctor.FirstName + " " + com.Doctor.Name,
+                Text = com.CommentText
+            }).ToList();
         }
+
+        doctorId = doctors[0].DoctorId;
+    }
+
+    private async Task FilterDoctor(ChangeEventArgs e)
+    {
+        doctors = await _doctorService.GetDoctors();
+        doctors = doctors.Where(doc => (string)doc.Specialization == (string)e.Value).ToList();
+        doctorId = doctors[0].DoctorId;
+        StateHasChanged();
+    }
+
+    private async Task Add()
+    {
+        if (string.IsNullOrWhiteSpace(Comment))
+        {
+            errorMassage = "Комментарий не может быть пустым";
+            return;
+        }
+
+        var doctorC = new Doctor()
+        {
+            DoctorId = doctorId
+        };
+
+        var patientC = new Patient()
+        {
+            PatientId = user.Patient.PatientId
+        };
+
+        var comment = new Comment()
+        {
+            Doctor = doctorC,
+            Patient = patientC,
+            CommentText = Comment
+        };
+
+        await _commentService.AddComment(comment);
+
+        Comment = string.Empty;
+
+        comments = await _commentService.GetCommentsByPatient(user.Patient.PatientId);
+
+        if (user.Doctor is not null)
+        {
+            commentsView = comments.Select(com => new CommentView()
+            {
+                Name = com.Patient.FirstName + " " + com.Patient.Name,
+                Text = com.CommentText
+            }).ToList();
+        }
+        else
+        {
+            commentsView = comments.Select(com => new CommentView()
+            {
+                Name = com.Doctor.FirstName + " " + com.Doctor.Name,
+                Text = com.CommentText
+            }).ToList();
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnSelectRowClick(IgbGridCellEventArgs e)
+    {
+        deletedId = e.CellInfo.DataRow;
     }
 }

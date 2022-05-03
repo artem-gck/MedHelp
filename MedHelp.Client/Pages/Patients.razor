@@ -7,6 +7,8 @@
 @inject IPatientService _patientService
 @inject IBasicService _basicService
 
+<input @oninput="async e => await Search(e)"></input>
+
 <div class="container vertical plot">
     <div class="container vertical" style="--use-accessibility:true;">
         @if (patientsView != null)
@@ -108,6 +110,34 @@
             Sex = pat.Sex.Value == "male" ? "Мужской" : "Женский",
             Tolons = pat.Tolons.Count
         }).ToList();
+    }
+
+    private async Task Search(ChangeEventArgs e)
+    {
+
+        if (!string.IsNullOrWhiteSpace((string)e.Value))
+        {
+            patients = await _patientService.Search((string)e.Value);
+        }
+        else
+        {
+            patients = await _patientService.GetPatients();
+        }
+
+        patientsView = patients.Select(pat => new PatientView()
+        {
+            Login = pat.User.Login,
+            Password = pat.User.Password,
+            Name = pat.Name,
+            FirstName = pat.FirstName,
+            LastName = pat.LastName,
+            NumberOfPhone = pat.NumberOfPhone,
+            DateOfDirth = (DateTime)pat.DateOfDirth,
+            Sex = pat.Sex.Value == "male" ? "Мужской" : "Женский",
+            Tolons = pat.Tolons.Count
+        }).ToList();
+
+        StateHasChanged();
     }
 
     private async Task Add()

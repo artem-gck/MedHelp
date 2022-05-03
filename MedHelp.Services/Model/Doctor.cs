@@ -15,6 +15,7 @@ namespace MedHelp.Services.Model
         public string? NumberOfPhone { get; set; }
         public string? Specialization { get; set; }
         public List<Tolon>? Tolons { get; set; }
+        public List<Comment>? Comments { get; set; }
         public int UserId { get; set; }
         public User? User { get; set; }  
     }

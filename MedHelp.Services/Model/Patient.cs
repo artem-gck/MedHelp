@@ -16,6 +16,7 @@ namespace MedHelp.Services.Model
         public DateTime? DateOfDirth { get; set; }
         public Sex? Sex { get; set; }
         public List<Tolon>? Tolons { get; set; }
+        public List<Comment>? Comments { get; set; }
         public int UserId { get; set; }
         public User? User { get; set; }
     }

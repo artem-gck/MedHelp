@@ -55,5 +55,11 @@ namespace MedHelp.Controllers
         {
             return await _patientService.UpdatePatient(patient);
         }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<List<Patient>>> Search(string search)
+        {
+            return await _patientService.Search(search);
+        }
     }
 }

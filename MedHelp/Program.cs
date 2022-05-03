@@ -14,10 +14,12 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IDoctorService, DoctorService>();
 builder.Services.AddTransient<IPatientService, PatientService>();
+builder.Services.AddTransient<ICommentService, CommentService>();
 
 builder.Services.AddTransient<IAuthAccess, AuthAccess>();
 builder.Services.AddTransient<IDoctorAccess, DoctorAccess>();
 builder.Services.AddTransient<IPatientAccess, PatientAccess>();
+builder.Services.AddTransient<ICommentAccess, CommentAccess>();
 
 builder.Services.AddCors();
 

@@ -93,5 +93,20 @@ namespace MedHelp.Access.SqlServer
 
             return patientDb.Entity.UserId;
         }
+
+        public async Task<List<Patient>> Search(string searchString)
+        {
+            return await _medHelpContext.Patients.Include(pat => pat.User)
+                                                 .Include(pat => pat.Sex)
+                                                 .Include(pat => pat.Tolons)
+                                                 .Where(pat => pat.User.Login.Contains(searchString) || 
+                                                               pat.User.Password.Contains(searchString) || 
+                                                               pat.Name.Contains(searchString) || 
+                                                               pat.FirstName.Contains(searchString) || 
+                                                               pat.LastName.Contains(searchString) || 
+                                                               pat.DateOfDirth.ToString().Contains(searchString) || 
+                                                               pat.NumberOfPhone.Contains(searchString))
+                                                 .ToListAsync();
+        }
     }
 }

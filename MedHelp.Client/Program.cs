@@ -23,6 +23,7 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IBasicService, BasicService>();
 builder.Services.AddTransient<IDoctorService, DoctorService>();
 builder.Services.AddTransient<IPatientService, PatientService>();
+builder.Services.AddTransient<ICommentService, CommentService>();
 
 builder.Services.AddScoped(typeof(IIgniteUIBlazor), typeof(IgniteUIBlazor));
 builder.Services.AddScoped(sp => httpClient);
