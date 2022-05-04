@@ -19,7 +19,14 @@
                                  BorderWidthBottom=0
                                  BorderWidthLeft=0
                                  BorderWidthRight=0>
-                        <IgbTextColumn Field="DoctorName" HeaderText="Доктор" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        @if (role == "doctor")
+                        {
+                            <IgbTextColumn Field="DoctorName" HeaderText="Пациент" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        }
+                        else
+                        {
+                            <IgbTextColumn Field="DoctorName" HeaderText="Доктор" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        }
                         <IgbTextColumn Field="Specialization" HeaderText="Специализация" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
                         <IgbDateTimeColumn Field="Time" HeaderText="Дата" Width="@("*>100")" DateTimeFormat="DateTimeFormats.DateTimeShort" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
                         <IgbTextColumn Field="NameOfIl" HeaderText="Болезнь" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
@@ -50,21 +57,33 @@
         {
             doctor = (await _doctorService.GetDoctors()).FirstOrDefault(doc => doc.User.Login == login);
             receptions = await _doctorService.GetReceptions(doctor.DoctorId);
+
+            receptionsView = receptions.Select(rec => new ReceptionView()
+                {
+                    DoctorName = rec.Tolon.Patient.FirstName + " " + rec.Tolon.Patient.Name + " " + rec.Tolon.Patient.LastName,
+                    Specialization = rec.Tolon.Doctor.Specialization,
+                    Time = rec.Tolon.Time,
+                    NameOfIl = rec.Disease.Name,
+                    Description = rec.Disease.Description,
+                    Conclusion = rec.Disease.Conclusion
+                }).ToList();
         }
         else
         {
             patient = (await _patientService.GetPatients()).FirstOrDefault(pac => pac.User.Login == login);
             receptions = await _patientService.GetReceptions(patient.PatientId);
+
+            receptionsView = receptions.Select(rec => new ReceptionView()
+                {
+                    DoctorName = rec.Tolon.Doctor.FirstName + " " + rec.Tolon.Doctor.Name + " " + rec.Tolon.Doctor.LastName,
+                    Specialization = rec.Tolon.Doctor.Specialization,
+                    Time = rec.Tolon.Time,
+                    NameOfIl = rec.Disease.Name,
+                    Description = rec.Disease.Description,
+                    Conclusion = rec.Disease.Conclusion
+                }).ToList();
         }
 
-        receptionsView = receptions.Select(rec => new ReceptionView()
-        {
-            DoctorName = rec.Tolon.Doctor.FirstName + " " + rec.Tolon.Doctor.Name + " " + rec.Tolon.Doctor.LastName,
-            Specialization = rec.Tolon.Doctor.Specialization,
-            Time = rec.Tolon.Time,
-            NameOfIl = rec.Disease.Name,
-            Description = rec.Disease.Description,
-            Conclusion = rec.Disease.Conclusion
-        }).ToList();
+
     }
 }

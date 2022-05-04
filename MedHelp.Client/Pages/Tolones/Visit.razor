@@ -6,45 +6,69 @@
 @inject IAuthService _authService;
 @inject IPatientService _patientService;
 
-<div>
-    <span>@patient.FirstName</span>
-    <span>@patient.Name</span>
-    <span>@patient.LastName</span>
-    <span>@patient.NumberOfPhone</span>
-    <span>@(patient.Sex.Value == "male" ? "Мужской" : "Женский")</span>
-    <span>@patient.DateOfDirth</span>
+<div class="visit">
+    <div class="visit-top">
+        <div class="lables-form">
+            <div class="lables">
+                <span>Фамилия</span>
+                <span>Имя</span>
+                <span>Отчество</span>
+                <span>Номер телефона</span>
+                <span>Пол</span>
+                <span>Дата рождения</span>
+            </div>
+            <div class="lables">
+                <span>@patient.FirstName</span>
+                <span>@patient.Name</span>
+                <span>@patient.LastName</span>
+                <span>@patient.NumberOfPhone</span>
+                <span>@(patient.Sex.Value == "male" ? "Мужской" : "Женский")</span>
+                <span>@patient.DateOfDirth</span>
+            </div>
+        </div>
 
-    <input @bind="@NameOfDisease"></input>
-    <input @bind="@DiscriptionOfDisease"></input>
-    <input @bind="@ConclusionOfDisease"></input>
-    <button @onclick="async e => await AddReception()">Закончить приём</button>
-
-    <div class="container vertical plot">
-        <div class="container vertical" style="--use-accessibility:true;">
-            @if (receptionsView != null)
-            {
-                <div style="overflow: hidden">
-                    <IgbDataGrid Height="800px" 
-                                 Width="1200px"
-                                 DataSource="receptionsView"
-                                 AutoGenerateColumns="false"
-                                 SelectionMode="GridSelectionMode.SingleRow"
-                                 BorderWidthBottom=0
-                                 BorderWidthLeft=0
-                                 BorderWidthRight=0>
-                        <IgbTextColumn Field="DoctorName" HeaderText="Доктор" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
-                        <IgbTextColumn Field="Specialization" HeaderText="Специализация" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
-                        <IgbDateTimeColumn Field="Time" HeaderText="Дата" Width="@("*>100")" DateTimeFormat="DateTimeFormats.DateTimeShort" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
-                        <IgbTextColumn Field="NameOfIl" HeaderText="Болезнь" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
-                        <IgbTextColumn Field="Description" HeaderText="Симптомы" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
-                        <IgbTextColumn Field="Conclusion" HeaderText="Лечение" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
-                    </IgbDataGrid>
-                </div>
-            }
+        <div class="container vertical plot">
+            <div class="container vertical" style="--use-accessibility:true;">
+                @if (receptionsView != null)
+                {
+                    <div style="overflow: hidden">
+                        <IgbDataGrid Height="800px" 
+                                     Width="100%"
+                                     DataSource="receptionsView"
+                                     AutoGenerateColumns="false"
+                                     SelectionMode="GridSelectionMode.SingleRow"
+                                     BorderWidthBottom=0
+                                     BorderWidthLeft=0
+                                     BorderWidthRight=0>
+                            <IgbTextColumn Field="DoctorName" HeaderText="Доктор" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                            <IgbTextColumn Field="Specialization" HeaderText="Специализация" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                            <IgbDateTimeColumn Field="Time" HeaderText="Дата" Width="@("*>100")" DateTimeFormat="DateTimeFormats.DateTimeShort" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                            <IgbTextColumn Field="NameOfIl" HeaderText="Болезнь" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                            <IgbTextColumn Field="Description" HeaderText="Симптомы" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                            <IgbTextColumn Field="Conclusion" HeaderText="Лечение" Width="@("*>100")" HorizontalAlignment="CellContentHorizontalAlignment.Center" />
+                        </IgbDataGrid>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 
-    <button @onclick="Exit">Вернуться</button>
+    <div class="visit-bottom">
+        <div class="inputes">
+            <span>Болезнь</span>
+            <input @bind="@NameOfDisease"></input>
+        </div>
+        <div class="inputes">
+            <span>Симптомы</span>
+            <input class="tol" @bind="@DiscriptionOfDisease"></input>
+        </div>
+        <div class="inputes">
+            <span>Назначения</span>
+            <input @bind="@ConclusionOfDisease"></input>
+        </div>
+        <button @onclick="async e => await AddReception()">Закончить приём</button>
+        <button @onclick="Exit">Вернуться</button>
+    </div>
 </div>
 
 @code {

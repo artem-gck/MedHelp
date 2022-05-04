@@ -165,6 +165,8 @@
             PatientNumberOfPhone = t.Patient.NumberOfPhone
         }).ToList();
 
+        errorMassage = string.Empty;
+
         StateHasChanged();
     }
 
@@ -214,6 +216,8 @@
             Time = t.Time,
             PatientNumberOfPhone = t.Patient.NumberOfPhone
         }).ToList();
+
+        errorMassage = string.Empty;
 
         StateHasChanged();
     }

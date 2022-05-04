@@ -1,0 +1,68 @@
+﻿span {
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #72737A;
+}
+
+input {
+    width: 200px;
+    border: 0px;
+    border-radius: 15px;
+    height: 35px;
+    font-size: 18px;
+    font-family: "SF Compact Text", sans-serif;
+    padding-left: 10px;
+    background-color: white;
+    margin-right: 25px;
+}
+
+input:focus {
+    outline: none !important
+}
+
+button {
+    background-color: #14566D;
+    border: 0px;
+    border-radius: 15px;
+    height: 35px;
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: white;
+    width: 250px;
+    margin-top: 20px;
+}
+
+.inputes {
+    display: flex;
+    flex-direction: column;
+}
+
+.visit-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.tol {
+    width: 500px;
+}
+
+.visit-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.lables-form {
+    display: flex;
+    flex-direction: row;
+    height: 400px;
+    width: 500px;
+}
+
+.lables {
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
