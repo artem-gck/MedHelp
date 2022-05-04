@@ -63,3 +63,9 @@ input:focus {
     flex-direction: column;
     justify-content: space-around;
 }
+
+.error {
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #D32B27;
+}

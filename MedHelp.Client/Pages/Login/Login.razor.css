@@ -65,3 +65,9 @@ a {
     font-family: "SF Compact Text", sans-serif;
     color: white;
 }
+
+.error {
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #D32B27;
+}

@@ -11,10 +11,10 @@
         <input type="text" @bind="@LoginField"></input>
         <span class="lables">Пароль</span>
         <input type="password" @bind="@PasswordField"></input>
-        <span class="error">@errorMassage</span>
         <div class="forgotPasswordPlace">
             <a href="/registration" class="registrationLink">Нет аккаунта?</a>
         </div>
+        <span class="error">@errorMassage</span>
     </div>
     <button @onclick="async e => await LoginAsync()">Авторизация</button>
 </div>
@@ -27,6 +27,12 @@
 
     private async Task LoginAsync()
     {
+        if (string.IsNullOrWhiteSpace(LoginField) || string.IsNullOrWhiteSpace(PasswordField))
+        {
+            errorMassage = "Введите все данные";
+            return;
+        }
+
         var loginModel = new LoginModel()
         {
             Login = LoginField,
@@ -35,7 +41,7 @@
 
         var tokens = await _authService.Login(loginModel);
 
-        if (string.IsNullOrWhiteSpace(tokens.AccessToken))
+        if (tokens is null || string.IsNullOrWhiteSpace(tokens.AccessToken))
         {
             errorMassage = "Логин или пароль не подходят";
             return;

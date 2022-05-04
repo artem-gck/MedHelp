@@ -9,7 +9,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    height: 500px;
+    height: 350px;
     width: 200px;
 }
 
@@ -28,7 +28,7 @@ span {
     flex-direction: row;
     justify-content: flex-start;
     width: 400px;
-    height: 500px;
+    height: 350px;
 }
 
 .select {
@@ -78,4 +78,10 @@ button {
     color: white;
     width: 300px;
     margin-right: 25px;
+}
+
+.error {
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #D32B27;
 }

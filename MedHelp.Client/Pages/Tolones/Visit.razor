@@ -69,6 +69,7 @@
         <button @onclick="async e => await AddReception()">Закончить приём</button>
         <button @onclick="Exit">Вернуться</button>
     </div>
+    <span class="error">@errorMassage</span>
 </div>
 
 @code {
@@ -81,6 +82,8 @@
     private string NameOfDisease { get; set; }
     private string DiscriptionOfDisease { get; set; }
     private string ConclusionOfDisease { get; set; }
+
+    private string errorMassage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,6 +114,12 @@
 
     private async Task AddReception()
     {
+        if (string.IsNullOrWhiteSpace(NameOfDisease) || string.IsNullOrWhiteSpace(DiscriptionOfDisease) || string.IsNullOrWhiteSpace(ConclusionOfDisease))
+        {
+            errorMassage = "Введите все поля";
+            return;
+        }
+
         var disease = new Disease()
             {
                 Name = NameOfDisease,

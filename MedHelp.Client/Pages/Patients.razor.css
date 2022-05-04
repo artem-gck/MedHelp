@@ -81,3 +81,9 @@ input:focus {
     width: 93%;
     margin-left: 10px;
 }
+
+.error {
+    font: 18px sans-serif;
+    font-family: "SF Compact Text", sans-serif;
+    color: #D32B27;
+}

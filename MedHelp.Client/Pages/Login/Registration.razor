@@ -36,11 +36,10 @@
                 }
             }
         </select>
-
-        <span class="error">@errorMassage</span>
         <div class="forgotPasswordPlace">
             <a href="/login" class="registrationLink">Есть аккаунт?</a>
         </div>
+        <span class="error">@errorMassage</span>
     </div>
     <button @onclick="async e => await RegistrationAsync()">Регистрация</button>
 </div>
@@ -52,7 +51,7 @@
     private string FirstNameField { get; set; }
     private string LastNameField { get; set; }
     private string NumberOfPhoneField { get; set; }
-    private string SexField { get; set; }
+    private string SexField { get; set; } = "male";
 
     private List<Sex> listOfSexes;
     private string errorMassage;
@@ -67,6 +66,12 @@
 
     private async Task RegistrationAsync()
     {
+        if (string.IsNullOrWhiteSpace(LoginField) || string.IsNullOrWhiteSpace(PasswordField) || string.IsNullOrWhiteSpace(NameField) || string.IsNullOrWhiteSpace(FirstNameField) || string.IsNullOrWhiteSpace(LastNameField) || string.IsNullOrWhiteSpace(NumberOfPhoneField))
+        {
+            errorMassage = "Введите все данные";
+            return;
+        }
+
         if (!regexForNumberPhone.IsMatch(NumberOfPhoneField) || !regexForText.IsMatch(NameField) || !regexForText.IsMatch(FirstNameField) || !regexForText.IsMatch(LastNameField))
         {
             errorMassage = "Формат ввода не верный";

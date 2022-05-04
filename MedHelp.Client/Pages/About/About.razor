@@ -54,7 +54,6 @@
                                     DataSource="commentsView"
                                     AutoGenerateColumns="false"
                                     SelectionMode="GridSelectionMode.SingleRow"
-                                    CellClicked="e => OnSelectRowClick(e)"
                                     BorderWidthBottom=0
                                     BorderWidthLeft=0
                                     BorderWidthRight=0>
@@ -93,8 +92,8 @@
 
         <input class="comment-field" @bind="@Comment"></input>
         <button @onclick="async e => await Add()">Добавить комментарий</button>
-        <span>@errorMassage</span>
     </div>
+    <span class="error">@errorMassage</span>
 }
 
 @code {
@@ -120,7 +119,6 @@
 
     private int doctorId;
     private string speci;
-    private int deletedId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -225,10 +223,7 @@
         }
 
         StateHasChanged();
-    }
 
-    private void OnSelectRowClick(IgbGridCellEventArgs e)
-    {
-        deletedId = e.CellInfo.DataRow;
+        errorMassage = string.Empty;
     }
 }
